@@ -29,6 +29,10 @@
         textAttribute.font = self.textFont;
         textAttribute.color = self.textColor;
         textAttribute.alignment = NSTextAlignmentJustified;
+        if (self.underlineColor) {
+            textAttribute.underlineColor = self.underlineColor;
+            textAttribute.underlineStyle = NSUnderlineStyleSingle;
+        }
         [attribute appendAttributedString:textAttribute];
     }
     if (self.image) {
@@ -42,6 +46,9 @@
     }
     YYTextBorder *highlightBorder = [YYTextBorder new];
     highlightBorder.fillColor = [UIColor clearColor];
+    if (self.underlineColor) {
+        highlightBorder.insets = UIEdgeInsetsMake(-2, 0, -2, 0);
+    }
     YYTextHighlight *highlight = [YYTextHighlight new];
     [highlight setBackgroundBorder:highlightBorder];
     [attribute setTextHighlight:highlight range:attribute.rangeOfAll];

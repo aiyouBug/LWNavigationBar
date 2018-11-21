@@ -18,6 +18,7 @@ typedef NS_ENUM(NSUInteger, LWBarAttributeType) {
 @property (nullable,nonatomic,strong) UIFont *textFont;
 @property (nullable,nonatomic,strong) UIColor *textColor;
 @property (nullable,nonatomic,strong) UIColor *hightlightColor;
+@property (nullable,nonatomic,strong) UIColor *underlineColor;
 @property (nonatomic,assign) CGSize imageSize;
 - (NSMutableAttributedString *)lw_createAttributeWithBarAttributeType:(LWBarAttributeType)type;
 @end

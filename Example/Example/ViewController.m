@@ -59,12 +59,8 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     LWBarAttribute *leftBarAttribute = [[LWBarAttribute alloc] init];
-    leftBarAttribute.image = [UIImage imageNamed:@"nav_back_black"];
-    leftBarAttribute.text = @"返回";
-    leftBarAttribute.imageSize = CGSizeMake(20, 20);
+    leftBarAttribute.text = nil;
     leftBarAttribute.hightlightColor = [UIColor clearColor];
-    leftBarAttribute.textColor = [UIColor blackColor];
-    leftBarAttribute.textFont = [UIFont systemFontOfSize:15.0f];
     [self.bar lw_updateLeftAttributeContent:[leftBarAttribute lw_createAttributeWithBarAttributeType:LWBarAttributeTypeImageFront]];
 }
 
