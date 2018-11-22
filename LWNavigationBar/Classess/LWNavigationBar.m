@@ -188,6 +188,7 @@
 }
 - (void)lw_updateNavBarAlpha:(CGFloat)alpha {
     self.layer.backgroundColor = [self.barObj.navBarColor colorWithAlphaComponent:alpha].CGColor;
+    self.statusBarView.layer.backgroundColor = [self.barObj.navBarColor colorWithAlphaComponent:alpha].CGColor;
     self.barObj.navBarAlpha = alpha;
 }
 - (void)lw_updateLineAlpha:(CGFloat)alpha {
