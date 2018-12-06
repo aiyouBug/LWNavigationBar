@@ -8,233 +8,231 @@
 
 #import "LWNavigationBar.h"
 
-@implementation LWNavigationItemAttribute
-
-@end
-
 @interface LWNavigationBarItem ()
-@property (nonatomic,strong,readwrite) LWNavigationItemAttribute *lw_attribute;
-@property (nonatomic,assign) CGSize maxSize;
-@property (nonatomic,strong,readwrite) YYTextLayout *barLayout;
-@property (nonatomic,strong) NSMutableAttributedString *attribute;
-- (void)lw_updateItemWithMaxSize:(CGSize)maxSize;
+//标题
+@property (nonatomic,strong) UILabel *titleLabel;
+//图片
+@property (nonatomic,strong) UIImageView *imageView;
+//下划线
+@property (nonatomic,strong) UIView *lineView;
+//图片大小
+@property (nonatomic,assign) CGSize imageSize;
+//标题颜色
+@property (nonatomic,strong) UIColor *textColor;
+//标题字体
+@property (nonatomic,strong) UIFont *textFont;
+//标题文本
+@property (nonatomic,copy) NSString *title;
+//标题和图片间距，默认是5
+@property (nonatomic,assign) CGFloat titleImageInset;
+//下划线和文字的间距,默认1
+@property (nonatomic,assign) CGFloat lineTitleInset;
+//是否显示细线
+@property (nonatomic,assign) BOOL showLine;
 @end
 
 @implementation LWNavigationBarItem
-+ (instancetype)createNavigationBarItemWithAttribute:(LWNavigationItemAttribute *)attribute maxSize:(CGSize)maxSize {
-    return [[LWNavigationBarItem alloc] initWithAttribute:attribute maxSize:maxSize];
-}
-- (instancetype)initWithAttribute:(LWNavigationItemAttribute *)attribute maxSize:(CGSize)maxSize {
+
+- (instancetype)init {
     self = [super init];
     if (self) {
-        self.lw_attribute = attribute;
-        self.maxSize = maxSize;
-        [self p_setupItem];
+        [self p_initSubviews];
     }
     return self;
 }
-- (void)p_setupItem {
-    NSMutableAttributedString *attribute = [[NSMutableAttributedString alloc] init];
-    if (self.lw_attribute.title && self.lw_attribute.title.length > 0) {
-        NSMutableAttributedString *titleAttr = [[NSMutableAttributedString alloc] initWithString:self.lw_attribute.title];
-        titleAttr.font = self.lw_attribute.titleFont;
-        titleAttr.color = self.lw_attribute.titleColor;
-        titleAttr.alignment = NSTextAlignmentJustified;
-        if (self.lw_attribute.lineColor) {
-            titleAttr.underlineColor = self.lw_attribute.lineColor;
-            titleAttr.underlineStyle = NSUnderlineStyleSingle;
-        }
-        [attribute appendAttributedString:titleAttr];
-    }
-    if (self.lw_attribute.image) {
-        YYAnimatedImageView *imageView = [[YYAnimatedImageView alloc] initWithImage:self.lw_attribute.image];
-        NSMutableAttributedString *attachText = [NSMutableAttributedString attachmentStringWithContent:imageView contentMode:UIViewContentModeScaleAspectFill attachmentSize:self.lw_attribute.imageSize alignToFont:self.lw_attribute.titleFont alignment:YYTextVerticalAlignmentCenter];
-        if (self.lw_attribute.type == LWBarAttributeTypeTextFront) {
-            [attribute appendAttributedString:attachText];
-        }else if (self.lw_attribute.type == LWBarAttributeTypeImageFront) {
-            [attribute insertAttributedString:attachText atIndex:0];
-        }
-    }
-    YYTextBorder *highlightBorder = [YYTextBorder new];
-    highlightBorder.fillColor = [UIColor clearColor];
-    if (self.lw_attribute.lineColor) {
-        highlightBorder.insets = UIEdgeInsetsMake(-2, 0, -2, 0);
-    }
-    YYTextHighlight *highlight = [YYTextHighlight new];
-    [highlight setBackgroundBorder:highlightBorder];
-    [attribute setTextHighlight:highlight range:attribute.rangeOfAll];
-    __weak typeof(self) wsf = self;
-    self.highlightTapAction = ^(UIView * _Nonnull containerView, NSAttributedString * _Nonnull text, NSRange range, CGRect rect) {
-        if (wsf.lw_attribute.completionHandler) {
-            wsf.lw_attribute.completionHandler(text);
-        }
-    };
-    self.barLayout = [YYTextLayout layoutWithContainerSize:self.maxSize text:attribute];
-    self.textLayout = self.barLayout;
-    self.lineBreakMode = NSLineBreakByTruncatingTail;
-    self.numberOfLines = 1;
-    self.attribute = attribute;
+//初始化
+- (void)p_initSubviews {
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:self.titleLabel];
+    
+    self.imageView = [[UIImageView alloc] init];
+    [self addSubview:self.imageView];
+    
+    self.lineView = [[UIView alloc] init];
+    [self addSubview:self.lineView];
+    
+    self.titleImageInset = 5;
+    self.lineTitleInset = 1;
 }
-- (void)lw_updateItemWithAttribute:(LWNavigationItemAttribute *)attribute {
-    self.lw_attribute = attribute;
-    [self p_setupItem];
+- (void)setItemTitle:(NSString *)itemTitle {
+    self.title = itemTitle;
+    self.titleLabel.text = itemTitle;
 }
-- (void)lw_updateItemWithMaxSize:(CGSize)maxSize {
-    self.barLayout = [YYTextLayout layoutWithContainerSize:maxSize text:self.attribute];
-    self.textLayout = self.barLayout;
-    self.lineBreakMode = NSLineBreakByTruncatingTail;
-    self.numberOfLines = 1;
+- (void)setItemTitleFont:(UIFont *)itemTitleFont {
+    self.textFont = itemTitleFont;
+    self.titleLabel.font = itemTitleFont;
 }
-
+- (void)setItemTitleColor:(UIColor *)itemTitleColor {
+    self.textColor = itemTitleColor;
+    self.titleLabel.textColor = itemTitleColor;
+    self.lineView.backgroundColor = itemTitleColor;
+}
+- (void)setItemImage:(UIImage *)itemImage {
+    self.imageView.image = itemImage;
+}
+- (void)setItemImageSize:(CGSize)itemImageSize {
+    self.imageSize = itemImageSize;
+}
+- (void)showItemLine:(BOOL)show {
+    self.showLine = show;
+}
+- (CGSize)itemSize {
+    CGSize titleSize = CGSizeZero;
+    CGSize imageSize = CGSizeZero;
+    CGSize lineSize = CGSizeZero;
+    if (self.title && self.title.length > 0) {
+        titleSize = [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
+    }
+    imageSize = self.imageSize;
+    if (self.showLine) {
+        lineSize = CGSizeMake(titleSize.width, 0.5);
+        self.lineTitleInset = 1;
+    }else {
+        self.lineTitleInset = 0;
+    }
+    if (self.title && self.imageView.image) {
+        self.titleImageInset = 5;
+    }else {
+        self.titleImageInset = 0;
+    }
+    CGFloat itemW = (titleSize.width + self.titleImageInset + imageSize.width) + 2 * 5;
+    CGFloat itemH = (titleSize.height > imageSize.height ? titleSize.height : imageSize.height) + self.lineTitleInset + lineSize.height + 2 * 2;
+    return CGSizeMake(itemW, itemH);
+}
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    if (self.title && self.title.length > 0) {
+        CGSize titleSize =  [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
+        if (self.showLine) {
+            self.lineTitleInset = 1;
+            self.titleLabel.center = CGPointMake(self.frame.size.width * 0.5, (self.frame.size.height - 0.5 - self.lineTitleInset) * 0.5);
+            self.titleLabel.bounds = CGRectMake(0, 0, titleSize.width > self.frame.size.width ? self.frame.size.width : titleSize.width, titleSize.height);
+            self.lineView.frame = CGRectMake(CGRectGetMinX(self.titleLabel.frame), self.frame.size.height - 0.5, self.titleLabel.frame.size.width, 0.5);
+        }else {
+            self.lineTitleInset = 0;
+            self.titleLabel.center = CGPointMake(self.frame.size.width * 0.5,self.frame.size.height * 0.5);
+            self.titleLabel.bounds = CGRectMake(0, 0, titleSize.width > self.frame.size.width ? self.frame.size.width : titleSize.width, titleSize.height);
+            self.lineView.frame = CGRectZero;
+        }
+    }
+    
+    if (self.imageView.image) {
+        self.imageView.center = CGPointMake(CGRectGetMaxX(self.titleLabel.frame) + self.titleImageInset + 5 + self.imageSize.width * 0.5, self.frame.size.height * 0.5);
+        self.imageView.bounds = CGRectMake(0, 0, self.imageSize.width, self.imageSize.height);
+    }
+}
 @end
 #define LW_StatusBarH [UIApplication sharedApplication].statusBarFrame.size.height
 @interface LWNavigationBar ()
-@property (nonatomic,strong) NSArray<LWNavigationBarItem*> *leftItems;
-@property (nonatomic,strong) NSArray<LWNavigationBarItem*> *rightItems;
+//状态栏部分
+@property (nonatomic,strong) UIView *statusView;
+//左边items数组
+@property (nonatomic,strong) NSMutableArray<LWNavigationBarItem*> *leftItems;
+//右边items数组
+@property (nonatomic,strong) NSMutableArray<LWNavigationBarItem*> *rightItems;
+//中间标题
 @property (nonatomic,strong) LWNavigationBarItem *titleItem;
-@property (nonatomic,assign) CGSize barSize;
-@property (nonatomic,assign) CGFloat leftInset;
-@property (nonatomic,assign) CGFloat rightInset;
-@property (nonatomic,assign) CGFloat itemPadding;
+//左右间距
+@property (nonatomic,assign) CGFloat contentInset;
+//底部细线
 @property (nonatomic,strong) UIView *lineView;
-@property (nonatomic,strong) UIColor *groundColor;
-@property (nonatomic,strong) UIView *statusBarView;
 @end
 
 @implementation LWNavigationBar
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        self.leftItems = @[].mutableCopy;
+        self.rightItems = @[].mutableCopy;
+        self.statusView = [[UIView alloc] init];
+        [self addSubview:self.statusView];
         self.lineView = [[UIView alloc] init];
-        self.statusBarView = [[UIView alloc] init];
+        [self addSubview:self.lineView];
     }
     return self;
 }
-- (void)setBarLeftInset:(CGFloat)barLeftInset {
-    self.leftInset = barLeftInset;
+- (void)addItemToLeft:(LWNavigationBarItem *)item {
+    [self.leftItems addObject:item];
+    [self addSubview:item];
 }
-- (void)setBarRightInset:(CGFloat)barRightInset {
-    self.rightInset = barRightInset;
+- (void)addItemToRight:(LWNavigationBarItem *)item {
+    [self.rightItems addObject:item];
+    [self addSubview:item];
 }
-- (void)setBarItemPadding:(CGFloat)barItemPadding {
-    self.itemPadding = barItemPadding;
+- (void)addItemToTitle:(LWNavigationBarItem *)item {
+    self.titleItem = item;
+    [self addSubview:item];
 }
-
-- (void)configLeftItems:(NSArray<LWNavigationBarItem *> *)leftItems {
-    self.leftItems = leftItems;
+- (void)setBarContentInset:(CGFloat)barContentInset {
+    self.contentInset = barContentInset;
 }
-- (void)configRightItems:(NSArray<LWNavigationBarItem *> *)rightItems {
-    self.rightItems = rightItems;
+- (void)setItemLineViewColor:(UIColor *)color {
+    self.lineView.backgroundColor = color;
 }
-- (void)configTitleItem:(LWNavigationBarItem *)titleItem {
-    self.titleItem = titleItem;
+- (void)lw_updateNavBarWithAlpha:(CGFloat)alpha {
+    self.layer.backgroundColor = [self.backgroundColor colorWithAlphaComponent:alpha].CGColor;
+//    self.statusView.layer.backgroundColor = self.layer.backgroundColor;
 }
-- (void)configLineColor:(UIColor *)lineColor {
-    self.lineView.backgroundColor = lineColor;
-}
-- (void)reloadItems {
-    self.statusBarView.layer.backgroundColor = [self.backgroundColor colorWithAlphaComponent:self.alpha].CGColor;
-    self.statusBarView.frame = CGRectMake(0, 0, self.frame.size.width, LW_StatusBarH);
-    [self addSubview:self.statusBarView];
-    CGFloat minY = CGRectGetMaxY(self.statusBarView.frame);
-    
-    CGFloat minX = self.leftInset;
-    CGFloat leftItemX = minX;
-    for (int i = 0; i < self.leftItems.count; ++i) {
-        LWNavigationBarItem *item = self.leftItems[i];
-        item.center = CGPointMake(minX + item.barLayout.textBoundingSize.width * 0.5, minY + (self.frame.size.height - minY - 0.5) * 0.5);
-        item.bounds = CGRectMake(0, 0, item.barLayout.textBoundingSize.width, item.barLayout.textBoundingSize.height);
-        minX = CGRectGetMaxX(item.frame) + self.itemPadding;
-        [self addSubview:item];
-        leftItemX = CGRectGetMaxX(item.frame);
+- (void)lw_updateLeftItem:(LWNavigationBarItem *)item atIndex:(int)index {
+    if (index >= self.leftItems.count) {
+        return;
     }
-    
-    CGFloat maxX = self.frame.size.width - self.rightInset;
-    CGFloat rightItemX = maxX;
-    for (int i = (int)self.rightItems.count - 1; i >= 0 ; --i) {
-        LWNavigationBarItem *item = self.rightItems[i];
-        item.center = CGPointMake(maxX - item.barLayout.textBoundingSize.width * 0.5, minY + (self.frame.size.height - minY - 0.5) * 0.5);
-        item.bounds = CGRectMake(0, 0, item.barLayout.textBoundingSize.width, item.barLayout.textBoundingSize.height);
-        maxX = CGRectGetMinX(item.frame) - self.itemPadding;
-        [self addSubview:item];
-        rightItemX = CGRectGetMinX(item.frame);
-    }
-    
-    self.titleItem.center = CGPointMake(leftItemX + (rightItemX - leftItemX) * 0.5, minY + (self.frame.size.height - minY - 0.5) * 0.5);
-    self.titleItem.bounds = CGRectMake(0, 0, self.titleItem.barLayout.textBoundingSize.width, self.titleItem.barLayout.textBoundingSize.height);
-    [self addSubview:self.titleItem];
-    
-    self.lineView.frame = CGRectMake(0, self.frame.size.height - 0.5, self.frame.size.width, self.frame.size.height - 0.5);
-    [self addSubview:self.lineView];
-}
-- (void)lw_updateLeftAttributeContent:(LWNavigationItemAttribute *)attributeContent atIndex:(int)index{
-    if (index < self.leftItems.count) {
-        LWNavigationBarItem *item = self.leftItems[index];
-        [item lw_updateItemWithAttribute:attributeContent];
-    }
-     [self reloadItems];
-}
-- (void)lw_updateRightAttributeContent:(LWNavigationItemAttribute *)attributeContent atIndex:(int)index{
-    if (index < self.rightItems.count) {
-        LWNavigationBarItem *item = self.rightItems[index];
-        [item lw_updateItemWithAttribute:attributeContent];
-    }
-     [self reloadItems];
-}
-- (void)lw_updateTitleAttributeContent:(LWNavigationItemAttribute *)attributeContent {
-    [self.titleItem lw_updateItemWithAttribute:attributeContent];
+    LWNavigationBarItem *leftItem = self.leftItems[index];
+    [leftItem removeFromSuperview];
+    [self.leftItems removeObject:leftItem];
+    [self.leftItems insertObject:item atIndex:index];
+    [self addSubview:item];
     [self reloadItems];
 }
-- (void)lw_updateLeftAttributeItemAlpha:(CGFloat)alpha atIndex:(int)index{
-    if (index < self.leftItems.count) {
-        LWNavigationBarItem *item = self.leftItems[index];
-        item.alpha = alpha;
+- (void)lw_updateTitleItem:(LWNavigationBarItem *)item {
+    [self.titleItem removeFromSuperview];
+    self.titleItem = item;
+    [self addSubview:item];
+    [self reloadItems];
+}
+- (void)lw_updateRightItem:(LWNavigationBarItem *)item atIndex:(int)index {
+    if (index >= self.rightItems.count) {
+        return;
     }
+    LWNavigationBarItem *rightItem = self.rightItems[index];
+    [rightItem removeFromSuperview];
+    [self.rightItems removeObject:rightItem];
+    [self.rightItems insertObject:item atIndex:index];
+    [self addSubview:item];
+    [self reloadItems];
 }
-- (void)lw_updateTitleAttributeItemAlpha:(CGFloat)alpha{
-    self.titleItem.alpha = alpha;
-}
-- (void)lw_updateNavBarAlpha:(CGFloat)alpha {
-    self.layer.backgroundColor = [self.backgroundColor colorWithAlphaComponent:alpha].CGColor;
-    self.statusBarView.layer.backgroundColor = [self.backgroundColor colorWithAlphaComponent:alpha].CGColor;
+- (void)lw_updateLeftItemAlpha:(CGFloat)alpha atIndex:(int)index{
+    LWNavigationBarItem *item = self.leftItems[index];
+    item.alpha = alpha;
 }
 - (void)lw_updateLineAlpha:(CGFloat)alpha {
     self.lineView.alpha = alpha;
 }
-- (void)lw_addLeftItem:(LWNavigationBarItem *)leftItem {
-    if ([self.leftItems containsObject:leftItem]) {
-        return;
-    }
-    NSMutableArray *items = self.leftItems.mutableCopy;
-    [items addObject:leftItem];
-    self.leftItems = items.copy;
-    __block CGFloat maxW = 0;
-    [self.leftItems enumerateObjectsUsingBlock:^(LWNavigationBarItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        maxW += obj.barLayout.textBoundingSize.width;
-    }];
-    [self.rightItems enumerateObjectsUsingBlock:^(LWNavigationBarItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        maxW += obj.barLayout.textBoundingSize.width;
-    }];
-    [self.titleItem lw_updateItemWithMaxSize:CGSizeMake(self.frame.size.width - self.leftInset - self.rightInset - self.leftItems.count * self.itemPadding - self.rightItems.count * self.itemPadding - maxW, self.frame.size.height)];
-    [self reloadItems];
+- (void)lw_updateTitleItemAlpha:(CGFloat)alpha {
+    self.titleItem.alpha = alpha;
 }
-- (void)lw_removeLeftItem:(LWNavigationBarItem *)leftItem {
-    if (![self.leftItems containsObject:leftItem]) {
-        return;
+
+- (void)reloadItems {
+    self.statusView.frame = CGRectMake(0, 0, self.frame.size.width, LW_StatusBarH);
+    CGFloat y = CGRectGetMaxY(self.statusView.frame);
+    CGFloat x = self.contentInset;
+    for (int i = 0; i < self.leftItems.count; ++i) {
+        LWNavigationBarItem *item = self.leftItems[i];
+        item.center = CGPointMake(x + [item itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        item.bounds = CGRectMake(0, 0, [item itemSize].width, [item itemSize].height);
+        x = CGRectGetMaxX(item.frame);
     }
-    NSMutableArray *items = self.leftItems.mutableCopy;
-    if ([self.leftItems containsObject:leftItem]) {
-        [items removeObject:leftItem];
+    self.titleItem.center = CGPointMake(self.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
+    self.titleItem.bounds = CGRectMake(0, 0, self.frame.size.width - 2 * x - self.contentInset, [self.titleItem itemSize].height);
+    
+    x = self.frame.size.width - self.contentInset;
+    for (int i = (int)self.rightItems.count - 1; i >= 0; --i) {
+         LWNavigationBarItem *item = self.rightItems[i];
+        item.center = CGPointMake(x - [item itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        item.bounds = CGRectMake(0, 0, [item itemSize].width, [item itemSize].height);
+        x = CGRectGetMinX(item.frame);
     }
-    self.leftItems = items.copy;
-    __block CGFloat maxW = 0;
-    [self.leftItems enumerateObjectsUsingBlock:^(LWNavigationBarItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        maxW += obj.barLayout.textBoundingSize.width;
-    }];
-    [self.rightItems enumerateObjectsUsingBlock:^(LWNavigationBarItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        maxW += obj.barLayout.textBoundingSize.width;
-    }];
-    [self.titleItem lw_updateItemWithMaxSize:CGSizeMake(self.frame.size.width - self.leftInset - self.rightInset - self.leftItems.count * self.itemPadding - self.rightItems.count * self.itemPadding - maxW, self.frame.size.height)];
-    [self reloadItems];
 }
+
 @end

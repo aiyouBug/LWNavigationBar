@@ -7,55 +7,34 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <YYKit.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, LWBarAttributeType) {
-    LWBarAttributeTypeTextFront,
-    LWBarAttributeTypeImageFront
-};
-
-@interface LWNavigationItemAttribute : NSObject
-@property (nonatomic,copy) NSString *title;
-@property (nonatomic,strong) UIImage *image;
-@property (nonatomic,strong) UIFont *titleFont;
-@property (nonatomic,strong) UIColor *titleColor;
-@property (nonatomic,assign) CGSize imageSize;
-@property (nonatomic,strong) UIColor *lineColor;
-@property (nonatomic,assign) LWBarAttributeType type;
-@property (nonatomic,copy) void(^completionHandler)(id value);
-@end
-
-@interface LWNavigationBarItem : YYLabel
-+ (instancetype)createNavigationBarItemWithAttribute:(LWNavigationItemAttribute *)attribute maxSize:(CGSize)maxSize;
-- (instancetype)initWithAttribute:(LWNavigationItemAttribute *)attribute maxSize:(CGSize)maxSize;
-@property (nonatomic,strong,readonly) LWNavigationItemAttribute *lw_attribute;
-@property (nonatomic,strong,readonly) YYTextLayout *barLayout;
-- (void)lw_updateItemWithAttribute:(LWNavigationItemAttribute *)attribute;
+@interface LWNavigationBarItem : UIControl
+- (void)setItemTitle:(NSString *)itemTitle;
+- (void)setItemImage:(UIImage *)itemImage;
+- (void)setItemTitleColor:(UIColor *)itemTitleColor;
+- (void)setItemTitleFont:(UIFont *)itemTitleFont;
+- (void)setItemImageSize:(CGSize)itemImageSize;
+- (void)showItemLine:(BOOL)show;
+- (CGSize)itemSize;
 @end
 
 @interface LWNavigationBar : UIView
-//设置左右间距
-- (void)setBarLeftInset:(CGFloat)barLeftInset;
-- (void)setBarRightInset:(CGFloat)barRightInset;
-//设置每两个item之间的间距，默认为0，主要针对左右有多个的情况
-- (void)setBarItemPadding:(CGFloat)barItemPadding;
-- (void)configLeftItems:(NSArray<LWNavigationBarItem *>*)leftItems;
-- (void)configRightItems:(NSArray<LWNavigationBarItem *>*)rightItems;
-- (void)configTitleItem:(LWNavigationBarItem *)titleItem;
-- (void)configLineColor:(UIColor *)lineColor;
+- (void)setBarContentInset:(CGFloat)barContentInset;
+- (void)addItemToLeft:(LWNavigationBarItem *)item;
+- (void)addItemToRight:(LWNavigationBarItem *)item;
+- (void)addItemToTitle:(LWNavigationBarItem *)item;
+- (void)setItemLineViewColor:(UIColor *)color;
 - (void)reloadItems;
-
-- (void)lw_updateLeftAttributeContent:(LWNavigationItemAttribute *)attributeContent atIndex:(int)index;
-- (void)lw_updateRightAttributeContent:(LWNavigationItemAttribute *)attributeContent atIndex:(int)index;
-- (void)lw_updateTitleAttributeContent:(LWNavigationItemAttribute *)attributeContent;
-- (void)lw_updateLeftAttributeItemAlpha:(CGFloat)alpha atIndex:(int)index;
-- (void)lw_updateTitleAttributeItemAlpha:(CGFloat)alpha;
-- (void)lw_updateNavBarAlpha:(CGFloat)alpha;
+- (void)lw_updateNavBarWithAlpha:(CGFloat)alpha;
+- (void)lw_updateLeftItem:(LWNavigationBarItem *)item atIndex:(int)index;
+- (void)lw_updateTitleItem:(LWNavigationBarItem *)item;
+- (void)lw_updateRightItem:(LWNavigationBarItem *)item atIndex:(int)index;
+- (void)lw_updateLeftItemAlpha:(CGFloat)alpha  atIndex:(int)index;
 - (void)lw_updateLineAlpha:(CGFloat)alpha;
-- (void)lw_addLeftItem:(LWNavigationBarItem *)leftItem;
-- (void)lw_removeLeftItem:(LWNavigationBarItem *)leftItem;
+- (void)lw_updateTitleItemAlpha:(CGFloat)alpha;
 @end
 
 NS_ASSUME_NONNULL_END

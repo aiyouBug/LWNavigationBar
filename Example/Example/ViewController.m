@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "LWNavigationBar.h"
-#import <YYKit.h>
 
 @interface ViewController ()
 @property (nonatomic,strong) LWNavigationBar *bar;
@@ -19,59 +18,34 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    LWNavigationBarItem *leftItem = [[LWNavigationBarItem alloc] init];
+    [leftItem setItemImage:[UIImage imageNamed:@"nav_back_black"]];
+    [leftItem setItemImageSize:CGSizeMake(20, 20)];
     
-    LWNavigationItemAttribute *leftBarAttribute = [[LWNavigationItemAttribute alloc] init];
-    leftBarAttribute.image = [UIImage imageNamed:@"nav_back_black"];
-    leftBarAttribute.imageSize = CGSizeMake(20, 20);
+    LWNavigationBarItem *rightItem = [[LWNavigationBarItem alloc] init];
+    [rightItem setItemImageSize:CGSizeMake(20, 20)];
+    [rightItem setItemImage:[UIImage imageNamed:@"detail_share"]];
     
-    LWNavigationItemAttribute *rightBarAttribute = [[LWNavigationItemAttribute alloc] init];
-    rightBarAttribute.image = [UIImage imageNamed:@"detail_share"];
-    rightBarAttribute.imageSize = CGSizeMake(20, 20);
+    LWNavigationBarItem *titleItem = [[LWNavigationBarItem alloc] init];
+    [titleItem setItemTitle:@"这是一个很长的标题这是一个很长的标题这是一个很长的标题这是一个很长的标题"];
+    [titleItem setItemTitleFont:[UIFont systemFontOfSize:15]];
+    [titleItem setItemTitleColor:[UIColor blackColor]];
+    [titleItem showItemLine:YES];
     
-    LWNavigationItemAttribute *titleBarAttribute = [[LWNavigationItemAttribute alloc] init];
-    titleBarAttribute.title = @"这是一个很长很长额标题这是一个";
-    titleBarAttribute.titleFont = [UIFont systemFontOfSize:15.0f];
-    titleBarAttribute.titleColor = [UIColor blackColor];
-    
-    LWNavigationBarItem *leftItem = [LWNavigationBarItem createNavigationBarItemWithAttribute:leftBarAttribute maxSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
-    
-    LWNavigationBarItem *rightItem = [LWNavigationBarItem createNavigationBarItemWithAttribute:rightBarAttribute maxSize:self.view.frame.size];
-    
-    LWNavigationBarItem *titleItem = [LWNavigationBarItem createNavigationBarItemWithAttribute:titleBarAttribute maxSize:CGSizeMake(self.view.frame.size.width - 15 * 2 - leftItem.barLayout.textBoundingSize.width - rightItem.barLayout.textBoundingSize.width, self.view.frame.size.height)];
     
     LWNavigationBar *bar = [[LWNavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 88)];
-    [bar setBarLeftInset:15];
-    [bar setBarRightInset:15];
-    [bar configLeftItems:@[leftItem]];
-    [bar configRightItems:@[rightItem]];
-    [bar configTitleItem:titleItem];
+    [bar addItemToLeft:leftItem];
+    [bar addItemToRight:rightItem];
+    [bar setBarContentInset:15];
+    [bar addItemToTitle:titleItem];
     [bar reloadItems];
-    self.bar = bar;
     [self.view addSubview:bar];
-    
-    LWNavigationItemAttribute *add_leftBarAttribute = [[LWNavigationItemAttribute alloc] init];
-    add_leftBarAttribute.image = [UIImage imageNamed:@"nav_back_black"];
-    add_leftBarAttribute.imageSize = CGSizeMake(20, 20);
-    self.addItem = [LWNavigationBarItem createNavigationBarItemWithAttribute:add_leftBarAttribute maxSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
+    self.bar = bar;
+    bar.backgroundColor = [UIColor redColor];
 }
-static int idx = 0;
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
-    if (idx == 0) {
-        [self.bar lw_addLeftItem:self.addItem];
-    }
-    if (idx == 1) {
-        LWNavigationItemAttribute *add_leftBarAttribute = [[LWNavigationItemAttribute alloc] init];
-        add_leftBarAttribute.image = [UIImage imageNamed:@"nav_back_black"];
-        add_leftBarAttribute.imageSize = CGSizeMake(20, 20);
-        LWNavigationBarItem *item = [LWNavigationBarItem createNavigationBarItemWithAttribute:add_leftBarAttribute maxSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
-        [self.bar lw_addLeftItem:item];
-    }
-    if (idx == 2) {
-        [self.bar lw_removeLeftItem:self.addItem];
-    }
-    idx++;
-    
+    [self.bar lw_updateNavBarWithAlpha:0.5];
 }
 
 
