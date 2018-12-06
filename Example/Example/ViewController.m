@@ -19,49 +19,34 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    LWBarAttribute *leftBarAttribute = [[LWBarAttribute alloc] init];
+    LWNavigationItemAttribute *leftBarAttribute = [[LWNavigationItemAttribute alloc] init];
     leftBarAttribute.image = [UIImage imageNamed:@"nav_back_black"];
     leftBarAttribute.imageSize = CGSizeMake(20, 20);
-    leftBarAttribute.hightlightColor = [UIColor clearColor];
     
-    LWBarAttribute *rightBarAttribute = [[LWBarAttribute alloc] init];
+    LWNavigationItemAttribute *rightBarAttribute = [[LWNavigationItemAttribute alloc] init];
     rightBarAttribute.image = [UIImage imageNamed:@"detail_share"];
     rightBarAttribute.imageSize = CGSizeMake(20, 20);
-    rightBarAttribute.hightlightColor = [UIColor clearColor];
     
-    LWBarAttribute *titleBarAttribute = [[LWBarAttribute alloc] init];
-    titleBarAttribute.text = @"这是一个很长很长额标题这是一个";
-    titleBarAttribute.hightlightColor = [UIColor clearColor];
-    titleBarAttribute.textFont = [UIFont systemFontOfSize:15.0f];
-    titleBarAttribute.textColor = [UIColor blackColor];
+    LWNavigationItemAttribute *titleBarAttribute = [[LWNavigationItemAttribute alloc] init];
+    titleBarAttribute.title = @"这是一个很长很长额标题这是一个";
+    titleBarAttribute.titleFont = [UIFont systemFontOfSize:15.0f];
+    titleBarAttribute.titleColor = [UIColor blackColor];
     
-    LWBarObj *obj = [[LWBarObj alloc] init];
-    obj.leftAttributeString = [leftBarAttribute lw_createAttributeWithBarAttributeType:LWBarAttributeTypeTextFront];
-    obj.rightAttributeString = [rightBarAttribute lw_createAttributeWithBarAttributeType:LWBarAttributeTypeTextFront];
-    obj.titleAttributeString = [titleBarAttribute lw_createAttributeWithBarAttributeType:LWBarAttributeTypeTextFront];
-    obj.lineColor = [UIColor redColor];
-    obj.navBarColor = [UIColor greenColor];
-    obj.edgeInset = 15;
-    obj.titleMaxH = 80 - 20;
-    obj.navBarAlpha = 0.0;
-    obj.lineAlpha = 0.0;
-    obj.leftItemAction = ^(id  _Nullable value) {
-        NSLog(@"%@",value);
-    };
-    obj.rightItemAction = ^(id  _Nullable value) {
-        NSLog(@"%@",value);
-    };
+    LWNavigationBarItem *leftItem = [LWNavigationBarItem createNavigationBarItemWithAttribute:leftBarAttribute maxSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
     
-    LWNavigationBar *bar = [LWNavigationBarBuilder builderNavigationBarWithBarObj:obj superView:self.view];
-    bar.frame = CGRectMake(0, 0, self.view.frame.size.width, 80);
+    LWNavigationBarItem *rightItem = [LWNavigationBarItem createNavigationBarItemWithAttribute:rightBarAttribute maxSize:self.view.frame.size];
+    
+    LWNavigationBarItem *titleItem = [LWNavigationBarItem createNavigationBarItemWithAttribute:titleBarAttribute maxSize:CGSizeMake(self.view.frame.size.width - 15 * 2 - leftItem.barLayout.textBoundingSize.width - rightItem.barLayout.textBoundingSize.width, self.view.frame.size.height)];
+    
+    LWNavigationBar *bar = [[LWNavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 88)];
+    [bar setBarLeftInset:15];
+    [bar setBarRightInset:15];
+    [bar configLeftItems:@[leftItem]];
+    [bar configRightItems:@[rightItem]];
+    [bar configTitleItem:titleItem];
+    [bar reloadItems];
     self.bar = bar;
-}
-
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    LWBarAttribute *leftBarAttribute = [[LWBarAttribute alloc] init];
-    leftBarAttribute.text = nil;
-    leftBarAttribute.hightlightColor = [UIColor clearColor];
-    [self.bar lw_updateLeftAttributeContent:[leftBarAttribute lw_createAttributeWithBarAttributeType:LWBarAttributeTypeImageFront]];
+    [self.view addSubview:bar];
 }
 
 

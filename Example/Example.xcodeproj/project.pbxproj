@@ -12,8 +12,8 @@
 		33376B3921A55FAF0099C86F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33376B3821A55FAF0099C86F /* Assets.xcassets */; };
 		33376B3C21A55FAF0099C86F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 33376B3A21A55FAF0099C86F /* LaunchScreen.storyboard */; };
 		33376B3F21A55FAF0099C86F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 33376B3E21A55FAF0099C86F /* main.m */; };
-		33376B4921A55FBD0099C86F /* LWNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 33376B4721A55FBC0099C86F /* LWNavigationBar.m */; };
 		33376B4C21A55FDE0099C86F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 33376B4B21A55FDE0099C86F /* ViewController.m */; };
+		33F97E2D21B8F2AA00F21D31 /* LWNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 33F97E2C21B8F2A900F21D31 /* LWNavigationBar.m */; };
 		E5A7B9F36F8473C6244AC82B /* libPods-Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CE59B0640DBF2422AB59AAF /* libPods-Example.a */; };
 /* End PBXBuildFile section */
 
@@ -26,10 +26,10 @@
 		33376B3B21A55FAF0099C86F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		33376B3D21A55FAF0099C86F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33376B3E21A55FAF0099C86F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		33376B4721A55FBC0099C86F /* LWNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWNavigationBar.m; sourceTree = "<group>"; };
-		33376B4821A55FBC0099C86F /* LWNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWNavigationBar.h; sourceTree = "<group>"; };
 		33376B4A21A55FDD0099C86F /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		33376B4B21A55FDE0099C86F /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		33F97E2B21B8F2A900F21D31 /* LWNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWNavigationBar.h; sourceTree = "<group>"; };
+		33F97E2C21B8F2A900F21D31 /* LWNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWNavigationBar.m; sourceTree = "<group>"; };
 		8CE59B0640DBF2422AB59AAF /* libPods-Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BCFCB159E2B145655C5FF6E /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		E244849678392077FB86B7A4 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -94,8 +94,8 @@
 		33376B4621A55FBC0099C86F /* Classess */ = {
 			isa = PBXGroup;
 			children = (
-				33376B4821A55FBC0099C86F /* LWNavigationBar.h */,
-				33376B4721A55FBC0099C86F /* LWNavigationBar.m */,
+				33F97E2B21B8F2A900F21D31 /* LWNavigationBar.h */,
+				33F97E2C21B8F2A900F21D31 /* LWNavigationBar.m */,
 			);
 			path = Classess;
 			sourceTree = "<group>";
@@ -209,7 +209,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33376B4921A55FBD0099C86F /* LWNavigationBar.m in Sources */,
+				33F97E2D21B8F2AA00F21D31 /* LWNavigationBar.m in Sources */,
 				33376B3F21A55FAF0099C86F /* main.m in Sources */,
 				33376B4C21A55FDE0099C86F /* ViewController.m in Sources */,
 				33376B3121A55FAE0099C86F /* AppDelegate.m in Sources */,
