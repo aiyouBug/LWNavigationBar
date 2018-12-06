@@ -12,6 +12,7 @@
 
 @interface ViewController ()
 @property (nonatomic,strong) LWNavigationBar *bar;
+@property (nonatomic,strong) LWNavigationBarItem *addItem;
 @end
 
 @implementation ViewController
@@ -47,8 +48,21 @@
     [bar reloadItems];
     self.bar = bar;
     [self.view addSubview:bar];
+    
+    LWNavigationItemAttribute *add_leftBarAttribute = [[LWNavigationItemAttribute alloc] init];
+    add_leftBarAttribute.image = [UIImage imageNamed:@"nav_back_black"];
+    add_leftBarAttribute.imageSize = CGSizeMake(20, 20);
+    self.addItem = [LWNavigationBarItem createNavigationBarItemWithAttribute:add_leftBarAttribute maxSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
 }
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    LWNavigationItemAttribute *add_leftBarAttribute = [[LWNavigationItemAttribute alloc] init];
+    add_leftBarAttribute.image = [UIImage imageNamed:@"nav_back_black"];
+    add_leftBarAttribute.imageSize = CGSizeMake(20, 20);
+    LWNavigationBarItem *item = [LWNavigationBarItem createNavigationBarItemWithAttribute:add_leftBarAttribute maxSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
+    [self.bar lw_addLeftItem:item];
+}
 
 
 

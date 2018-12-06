@@ -16,6 +16,8 @@
 @property (nonatomic,strong,readwrite) LWNavigationItemAttribute *lw_attribute;
 @property (nonatomic,assign) CGSize maxSize;
 @property (nonatomic,strong,readwrite) YYTextLayout *barLayout;
+@property (nonatomic,strong) NSMutableAttributedString *attribute;
+- (void)lw_updateItemWithMaxSize:(CGSize)maxSize;
 @end
 
 @implementation LWNavigationBarItem
@@ -71,10 +73,17 @@
     self.textLayout = self.barLayout;
     self.lineBreakMode = NSLineBreakByTruncatingTail;
     self.numberOfLines = 1;
+    self.attribute = attribute;
 }
 - (void)lw_updateItemWithAttribute:(LWNavigationItemAttribute *)attribute {
     self.lw_attribute = attribute;
     [self p_setupItem];
+}
+- (void)lw_updateItemWithMaxSize:(CGSize)maxSize {
+    self.barLayout = [YYTextLayout layoutWithContainerSize:maxSize text:self.attribute];
+    self.textLayout = self.barLayout;
+    self.lineBreakMode = NSLineBreakByTruncatingTail;
+    self.numberOfLines = 1;
 }
 
 @end
@@ -191,5 +200,22 @@
 }
 - (void)lw_updateLineAlpha:(CGFloat)alpha {
     self.lineView.alpha = alpha;
+}
+- (void)lw_addLeftItem:(LWNavigationBarItem *)leftItem {
+    if ([self.leftItems containsObject:leftItem]) {
+        return;
+    }
+    NSMutableArray *items = self.leftItems.mutableCopy;
+    [items addObject:leftItem];
+    self.leftItems = items.copy;
+    __block CGFloat maxW = 0;
+    [self.leftItems enumerateObjectsUsingBlock:^(LWNavigationBarItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        maxW += obj.barLayout.textBoundingSize.width;
+    }];
+    [self.rightItems enumerateObjectsUsingBlock:^(LWNavigationBarItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        maxW += obj.barLayout.textBoundingSize.width;
+    }];
+    [self.titleItem lw_updateItemWithMaxSize:CGSizeMake(self.frame.size.width - self.leftInset - self.rightInset - self.leftItems.count * self.itemPadding - self.rightItems.count * self.itemPadding - maxW, self.frame.size.height)];
+    [self reloadItems];
 }
 @end
