@@ -54,14 +54,24 @@
     add_leftBarAttribute.imageSize = CGSizeMake(20, 20);
     self.addItem = [LWNavigationBarItem createNavigationBarItemWithAttribute:add_leftBarAttribute maxSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
 }
-
+static int idx = 0;
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
-    LWNavigationItemAttribute *add_leftBarAttribute = [[LWNavigationItemAttribute alloc] init];
-    add_leftBarAttribute.image = [UIImage imageNamed:@"nav_back_black"];
-    add_leftBarAttribute.imageSize = CGSizeMake(20, 20);
-    LWNavigationBarItem *item = [LWNavigationBarItem createNavigationBarItemWithAttribute:add_leftBarAttribute maxSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
-    [self.bar lw_addLeftItem:item];
+    if (idx == 0) {
+        [self.bar lw_addLeftItem:self.addItem];
+    }
+    if (idx == 1) {
+        LWNavigationItemAttribute *add_leftBarAttribute = [[LWNavigationItemAttribute alloc] init];
+        add_leftBarAttribute.image = [UIImage imageNamed:@"nav_back_black"];
+        add_leftBarAttribute.imageSize = CGSizeMake(20, 20);
+        LWNavigationBarItem *item = [LWNavigationBarItem createNavigationBarItemWithAttribute:add_leftBarAttribute maxSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
+        [self.bar lw_addLeftItem:item];
+    }
+    if (idx == 2) {
+        [self.bar lw_removeLeftItem:self.addItem];
+    }
+    idx++;
+    
 }
 
 

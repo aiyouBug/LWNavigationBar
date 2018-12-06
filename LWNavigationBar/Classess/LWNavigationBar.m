@@ -218,4 +218,23 @@
     [self.titleItem lw_updateItemWithMaxSize:CGSizeMake(self.frame.size.width - self.leftInset - self.rightInset - self.leftItems.count * self.itemPadding - self.rightItems.count * self.itemPadding - maxW, self.frame.size.height)];
     [self reloadItems];
 }
+- (void)lw_removeLeftItem:(LWNavigationBarItem *)leftItem {
+    if (![self.leftItems containsObject:leftItem]) {
+        return;
+    }
+    NSMutableArray *items = self.leftItems.mutableCopy;
+    if ([self.leftItems containsObject:leftItem]) {
+        [items removeObject:leftItem];
+    }
+    self.leftItems = items.copy;
+    __block CGFloat maxW = 0;
+    [self.leftItems enumerateObjectsUsingBlock:^(LWNavigationBarItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        maxW += obj.barLayout.textBoundingSize.width;
+    }];
+    [self.rightItems enumerateObjectsUsingBlock:^(LWNavigationBarItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        maxW += obj.barLayout.textBoundingSize.width;
+    }];
+    [self.titleItem lw_updateItemWithMaxSize:CGSizeMake(self.frame.size.width - self.leftInset - self.rightInset - self.leftItems.count * self.itemPadding - self.rightItems.count * self.itemPadding - maxW, self.frame.size.height)];
+    [self reloadItems];
+}
 @end
