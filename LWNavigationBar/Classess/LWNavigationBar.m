@@ -230,17 +230,14 @@
 - (void)addItemToLeft:(LWNavigationBarItem *)item {
     [self.leftItems addObject:item];
     [self addSubview:item];
-    [self reloadItems];
 }
 - (void)addItemToRight:(LWNavigationBarItem *)item {
     [self.rightItems addObject:item];
     [self addSubview:item];
-    [self reloadItems];
 }
 - (void)addItemToTitle:(LWNavigationBarItem *)item {
     self.titleItem = item;
     [self addSubview:item];
-    [self reloadItems];
 }
 - (void)setBarContentInset:(CGFloat)barContentInset {
     self.contentInset = barContentInset;
@@ -291,6 +288,22 @@
 }
 - (void)lw_updateTitleItemAlpha:(CGFloat)alpha {
     self.titleItem.alpha = alpha;
+}
+- (void)lw_addNewItemToLeft:(LWNavigationBarItem *)item {
+    if ([self.leftItems containsObject:item]) {
+        return;
+    }
+    [self.leftItems addObject:item];
+    [self addSubview:item];
+    [self reloadItems];
+}
+- (void)lw_addNewItemToRight:(LWNavigationBarItem *)item {
+    if ([self.rightItems containsObject:item]) {
+        return;
+    }
+    [self.rightItems addObject:item];
+    [self addSubview:item];
+    [self reloadItems];
 }
 
 - (void)reloadItems {

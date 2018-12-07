@@ -45,6 +45,8 @@ typedef NS_ENUM(NSUInteger, LWNavigationBarItemType) {
 - (void)lw_updateLeftItemAlpha:(CGFloat)alpha  atIndex:(int)index;
 - (void)lw_updateLineAlpha:(CGFloat)alpha;
 - (void)lw_updateTitleItemAlpha:(CGFloat)alpha;
+- (void)lw_addNewItemToLeft:(LWNavigationBarItem *)item;
+- (void)lw_addNewItemToRight:(LWNavigationBarItem *)item;
 @end
 
 NS_ASSUME_NONNULL_END
