@@ -15,6 +15,7 @@
 @property (nonatomic,strong) UIImageView *imageView;
 //下划线
 @property (nonatomic,strong) UIView *lineView;
+@property (nonatomic,strong) UIColor *lineColor;
 //图片大小
 @property (nonatomic,assign) CGSize imageSize;
 //标题颜色
@@ -23,12 +24,17 @@
 @property (nonatomic,strong) UIFont *textFont;
 //标题文本
 @property (nonatomic,copy) NSString *title;
-//标题和图片间距，默认是5
-@property (nonatomic,assign) CGFloat titleImageInset;
-//下划线和文字的间距,默认1
-@property (nonatomic,assign) CGFloat lineTitleInset;
+//标题和图片间距，默认是2
+@property (nonatomic,assign) CGFloat titleImagePadding;
+//下划线和文字的间距,默认0
+@property (nonatomic,assign) CGFloat lineTopPadding;
+//下划线高度，默认为1
+@property (nonatomic,assign) CGFloat lineHeight;
 //是否显示细线
 @property (nonatomic,assign) BOOL showLine;
+@property (nonatomic,assign) LWNavigationBarItemType itemType;
+//设置内容的内边距
+@property (nonatomic,assign) UIEdgeInsets contentInsets;
 @end
 
 @implementation LWNavigationBarItem
@@ -37,6 +43,14 @@
     self = [super init];
     if (self) {
         [self p_initSubviews];
+    }
+    return self;
+}
+- (instancetype)initWithItemType:(LWNavigationBarItemType)itemType {
+    self = [super init];
+    if (self) {
+        [self p_initSubviews];
+        self.itemType = itemType;
     }
     return self;
 }
@@ -52,8 +66,10 @@
     self.lineView = [[UIView alloc] init];
     [self addSubview:self.lineView];
     
-    self.titleImageInset = 5;
-    self.lineTitleInset = 1;
+    self.titleImagePadding = 2;
+    self.lineTopPadding = 0;
+    self.lineHeight = 1;
+    self.contentInsets = UIEdgeInsetsMake(0, 0, 0, 0);
 }
 - (void)setItemTitle:(NSString *)itemTitle {
     self.title = itemTitle;
@@ -66,7 +82,7 @@
 - (void)setItemTitleColor:(UIColor *)itemTitleColor {
     self.textColor = itemTitleColor;
     self.titleLabel.textColor = itemTitleColor;
-    self.lineView.backgroundColor = itemTitleColor;
+    self.lineColor = itemTitleColor;
 }
 - (void)setItemImage:(UIImage *)itemImage {
     self.imageView.image = itemImage;
@@ -77,51 +93,110 @@
 - (void)showItemLine:(BOOL)show {
     self.showLine = show;
 }
+- (void)setItemConentInsets:(UIEdgeInsets)itemContentInsets {
+    self.contentInsets = itemContentInsets;
+}
+- (void)setItemLineColor:(UIColor *)itemLineColor {
+    self.lineColor = itemLineColor;
+}
+- (void)setLineColor:(UIColor *)lineColor {
+    _lineColor = lineColor;
+    self.lineView.backgroundColor = lineColor;
+}
 - (CGSize)itemSize {
-    CGSize titleSize = CGSizeZero;
-    CGSize imageSize = CGSizeZero;
-    CGSize lineSize = CGSizeZero;
+    CGSize size = CGSizeZero;
+    switch (self.itemType) {
+        case LWNavigationBarItemOnlyText:
+           size = [self p_itemSizeOnlyText];
+            break;
+        case LWNavigationBarItemOnlyImage:
+           size = [self p_itemSizeOnlyImage];
+            break;
+        case LWNavigationBarItemTextLine:
+           size = [self p_itemSizeTextLine];
+            break;
+        case LWNavigationBarItemMulti:
+           size = [self p_itemSizeMulti];
+            break;
+    }
+    return size;
+}
+- (CGSize)p_itemSizeOnlyText {
     if (self.title && self.title.length > 0) {
-        titleSize = [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
+        CGSize titleSize = [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
+        return CGSizeMake(titleSize.width + 2 * self.contentInsets.left, titleSize.height + self.contentInsets.top * 2);
     }
-    imageSize = self.imageSize;
-    if (self.showLine) {
-        lineSize = CGSizeMake(titleSize.width, 0.5);
-        self.lineTitleInset = 1;
+    return CGSizeMake(0, 0);
+}
+- (CGSize)p_itemSizeOnlyImage {
+    return CGSizeMake(self.imageSize.width + 2 * self.contentInsets.left, self.imageSize.height + 2 * self.contentInsets.top);
+}
+- (CGSize)p_itemSizeTextLine {
+    if (self.title && self.title.length > 0) {
+        CGSize titleSize = [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
+        return CGSizeMake(titleSize.width + 2 * self.contentInsets.left, titleSize.height + self.contentInsets.top * 2 + self.lineTopPadding + self.lineHeight);
+    }
+    return CGSizeMake(0, 0);
+}
+- (CGSize)p_itemSizeMulti {
+    CGSize titleSize;
+    if (self.title && self.title.length > 0) {
+       titleSize = [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
     }else {
-        self.lineTitleInset = 0;
+        titleSize = CGSizeZero;
     }
-    if (self.title && self.imageView.image) {
-        self.titleImageInset = 5;
-    }else {
-        self.titleImageInset = 0;
-    }
-    CGFloat itemW = (titleSize.width + self.titleImageInset + imageSize.width) + 2 * 5;
-    CGFloat itemH = (titleSize.height > imageSize.height ? titleSize.height : imageSize.height) + self.lineTitleInset + lineSize.height + 2 * 2;
-    return CGSizeMake(itemW, itemH);
+    CGFloat h = titleSize.height > self.imageSize.height ? titleSize.height : self.imageSize.height;
+    return CGSizeMake(titleSize.width + self.titleImagePadding + self.imageSize.width + 2 * self.contentInsets.left, h + self.contentInsets.top * 2);
 }
 - (void)layoutSubviews {
     [super layoutSubviews];
-    if (self.title && self.title.length > 0) {
-        CGSize titleSize =  [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
-        if (self.showLine) {
-            self.lineTitleInset = 1;
-            self.titleLabel.center = CGPointMake(self.frame.size.width * 0.5, (self.frame.size.height - 0.5 - self.lineTitleInset) * 0.5);
-            self.titleLabel.bounds = CGRectMake(0, 0, titleSize.width > self.frame.size.width ? self.frame.size.width : titleSize.width, titleSize.height);
-            self.lineView.frame = CGRectMake(CGRectGetMinX(self.titleLabel.frame), self.frame.size.height - 0.5, self.titleLabel.frame.size.width, 0.5);
-        }else {
-            self.lineTitleInset = 0;
-            self.titleLabel.center = CGPointMake(self.frame.size.width * 0.5,self.frame.size.height * 0.5);
-            self.titleLabel.bounds = CGRectMake(0, 0, titleSize.width > self.frame.size.width ? self.frame.size.width : titleSize.width, titleSize.height);
-            self.lineView.frame = CGRectZero;
-        }
-    }
-    
-    if (self.imageView.image) {
-        self.imageView.center = CGPointMake(CGRectGetMaxX(self.titleLabel.frame) + self.titleImageInset + 5 + self.imageSize.width * 0.5, self.frame.size.height * 0.5);
-        self.imageView.bounds = CGRectMake(0, 0, self.imageSize.width, self.imageSize.height);
+    switch (self.itemType) {
+        case LWNavigationBarItemOnlyText:
+            [self p_layoutOnlyText];
+            break;
+        case LWNavigationBarItemTextLine:
+            [self p_layoutTextLine];
+            break;
+        case LWNavigationBarItemOnlyImage:
+            [self p_layoutOnlyImage];
+            break;
+        case LWNavigationBarItemMulti:
+            [self p_layoutMulti];
+            break;
     }
 }
+
+- (void)p_layoutOnlyText {
+    if (self.title && self.title.length > 0) {
+        CGSize titleSize =  [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
+        self.titleLabel.center = CGPointMake(self.frame.size.width * 0.5,self.frame.size.height * 0.5);
+        self.titleLabel.bounds = CGRectMake(0, 0, titleSize.width > self.frame.size.width ? self.frame.size.width : titleSize.width, titleSize.height);
+    }else {
+        self.titleLabel.frame = CGRectZero;
+    }
+}
+- (void)p_layoutOnlyImage {
+    self.imageView.center = CGPointMake(self.frame.size.width * 0.5, self.frame.size.height * 0.5);
+    self.imageView.bounds = CGRectMake(0, 0, self.imageSize.width, self.imageSize.height);
+}
+- (void)p_layoutTextLine {
+    if (self.title && self.title.length > 0) {
+        CGSize titleSize =  [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
+        self.titleLabel.center = CGPointMake(self.frame.size.width * 0.5,(self.frame.size.height - self.lineHeight) * 0.5);
+        self.titleLabel.bounds = CGRectMake(0, 0, titleSize.width > self.frame.size.width ? self.frame.size.width : titleSize.width, titleSize.height);
+        self.lineView.frame = CGRectMake(CGRectGetMinX(self.titleLabel.frame), self.frame.size.height - self.lineHeight, CGRectGetWidth(self.titleLabel.frame), self.lineHeight);
+    }
+}
+- (void)p_layoutMulti {
+    if (self.title && self.title.length > 0) {
+        CGSize titleSize =  [self.title boundingRectWithSize:CGSizeMake(HUGE, HUGE) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.textFont} context:NULL].size;
+        self.titleLabel.center = CGPointMake(titleSize.width * 0.5 + self.contentInsets.left,self.frame.size.height * 0.5);
+        self.titleLabel.bounds = CGRectMake(0, 0, titleSize.width, titleSize.height);
+    }
+    self.imageView.center = CGPointMake(self.frame.size.width + self.contentInsets.right - self.imageSize.width * 0.5, self.frame.size.height * 0.5);
+    self.imageView.bounds = CGRectMake(0, 0, self.imageSize.width, self.imageSize.height);
+}
+
 @end
 #define LW_StatusBarH [UIApplication sharedApplication].statusBarFrame.size.height
 @interface LWNavigationBar ()
@@ -160,6 +235,7 @@
 - (void)addItemToRight:(LWNavigationBarItem *)item {
     [self.rightItems addObject:item];
     [self addSubview:item];
+    [self reloadItems];
 }
 - (void)addItemToTitle:(LWNavigationBarItem *)item {
     self.titleItem = item;
@@ -188,7 +264,9 @@
     [self reloadItems];
 }
 - (void)lw_updateTitleItem:(LWNavigationBarItem *)item {
-    [self.titleItem removeFromSuperview];
+    if (self.titleItem) {
+        [self.titleItem removeFromSuperview];
+    }
     self.titleItem = item;
     [self addSubview:item];
     [self reloadItems];
@@ -225,8 +303,9 @@
         item.bounds = CGRectMake(0, 0, [item itemSize].width, [item itemSize].height);
         x = CGRectGetMaxX(item.frame);
     }
+    CGFloat titleW = ([self.titleItem itemSize].width > (self.frame.size.width - 2 * x - self.contentInset) ? (self.frame.size.width - 2 * x - self.contentInset) : [self.titleItem itemSize].width);
     self.titleItem.center = CGPointMake(self.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
-    self.titleItem.bounds = CGRectMake(0, 0, self.frame.size.width - 2 * x - self.contentInset, [self.titleItem itemSize].height);
+    self.titleItem.bounds = CGRectMake(0, 0, titleW, [self.titleItem itemSize].height);
     
     x = self.frame.size.width - self.contentInset;
     for (int i = (int)self.rightItems.count - 1; i >= 0; --i) {

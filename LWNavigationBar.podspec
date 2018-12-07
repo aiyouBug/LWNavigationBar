@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
 
 
   s.name         = "LWNavigationBar"
-  s.version      = "1.0.2"
+  s.version      = "1.0.3"
   s.summary      = "自定义导航栏"
 
   s.description  = "自定义导航栏，左右和标题item可以为文字，可以为图片，也可以为图文混合，支持回调事件，背景透明度渐变和标题文字透明度渐变"
