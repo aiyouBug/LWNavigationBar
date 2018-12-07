@@ -155,6 +155,7 @@
 - (void)addItemToLeft:(LWNavigationBarItem *)item {
     [self.leftItems addObject:item];
     [self addSubview:item];
+    [self reloadItems];
 }
 - (void)addItemToRight:(LWNavigationBarItem *)item {
     [self.rightItems addObject:item];
@@ -163,6 +164,7 @@
 - (void)addItemToTitle:(LWNavigationBarItem *)item {
     self.titleItem = item;
     [self addSubview:item];
+    [self reloadItems];
 }
 - (void)setBarContentInset:(CGFloat)barContentInset {
     self.contentInset = barContentInset;
@@ -172,7 +174,7 @@
 }
 - (void)lw_updateNavBarWithAlpha:(CGFloat)alpha {
     self.layer.backgroundColor = [self.backgroundColor colorWithAlphaComponent:alpha].CGColor;
-//    self.statusView.layer.backgroundColor = self.layer.backgroundColor;
+    self.statusView.layer.backgroundColor = self.layer.backgroundColor;
 }
 - (void)lw_updateLeftItem:(LWNavigationBarItem *)item atIndex:(int)index {
     if (index >= self.leftItems.count) {
@@ -233,6 +235,7 @@
         item.bounds = CGRectMake(0, 0, [item itemSize].width, [item itemSize].height);
         x = CGRectGetMinX(item.frame);
     }
+    self.lineView.frame = CGRectMake(0, self.frame.size.height - 0.5, self.frame.size.width, 0.5);
 }
 
 @end
