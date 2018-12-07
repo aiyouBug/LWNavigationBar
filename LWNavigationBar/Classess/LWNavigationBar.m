@@ -254,10 +254,11 @@
         return;
     }
     LWNavigationBarItem *leftItem = self.leftItems[index];
-    [leftItem removeFromSuperview];
     [self.leftItems removeObject:leftItem];
-    [self.leftItems insertObject:item atIndex:index];
-    [self addSubview:item];
+    [leftItem removeFromSuperview];
+    leftItem = item;
+    [self.leftItems insertObject:leftItem atIndex:index];
+    [self addSubview:leftItem];
     [self reloadItems];
 }
 - (void)lw_updateTitleItem:(LWNavigationBarItem *)item {
@@ -273,10 +274,11 @@
         return;
     }
     LWNavigationBarItem *rightItem = self.rightItems[index];
-    [rightItem removeFromSuperview];
     [self.rightItems removeObject:rightItem];
-    [self.rightItems insertObject:item atIndex:index];
-    [self addSubview:item];
+    [rightItem removeFromSuperview];
+    rightItem = item;
+    [self.rightItems insertObject:rightItem atIndex:index];
+    [self addSubview:rightItem];
     [self reloadItems];
 }
 - (void)lw_updateLeftItemAlpha:(CGFloat)alpha atIndex:(int)index{

@@ -21,6 +21,7 @@
     LWNavigationBarItem *leftItem = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemOnlyImage];
     [leftItem setItemImage:[UIImage imageNamed:@"nav_back_black"]];
     [leftItem setItemImageSize:CGSizeMake(20, 20)];
+    [leftItem addTarget:self action:@selector(action1) forControlEvents:UIControlEventTouchUpInside];
     
     LWNavigationBarItem *rightItem = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemOnlyImage];
     [rightItem setItemImageSize:CGSizeMake(20, 20)];
@@ -51,11 +52,27 @@
     [leftItem2 setItemTitleColor:[UIColor blackColor]];
     self.addItem = leftItem2;
 }
+static BOOL show = NO;
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
-    [self.bar lw_addNewItemToLeft:self.addItem];;
+    show = !show;
+    LWNavigationBarItem *item = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemOnlyImage];
+    if (show) {
+        [item setItemImage:[UIImage imageNamed:@"detail_share"]];
+        [item addTarget:self action:@selector(action2) forControlEvents:UIControlEventTouchUpInside];
+    }else {
+        [item setItemImage:[UIImage imageNamed:@"nav_back_black"]];
+        [item addTarget:self action:@selector(action1) forControlEvents:UIControlEventTouchUpInside];
+    }
+    [item setItemImageSize:CGSizeMake(20, 20)];
+    [self.bar lw_updateLeftItem:item atIndex:0];
 }
 
-
+- (void)action1 {
+    NSLog(@"left1");
+}
+- (void)action2 {
+    NSLog(@"left2");
+}
 
 @end
