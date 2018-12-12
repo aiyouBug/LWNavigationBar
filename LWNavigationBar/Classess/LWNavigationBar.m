@@ -71,39 +71,36 @@
     self.lineHeight = 1;
     self.contentInsets = UIEdgeInsetsMake(0, 0, 0, 0);
 }
-- (void)setItemTitle:(NSString *)itemTitle {
+- (void)lw_setItemTitle:(NSString *)itemTitle {
     self.title = itemTitle;
     self.titleLabel.text = itemTitle;
 }
-- (void)setItemTitleFont:(UIFont *)itemTitleFont {
+- (void)lw_setItemTitleFont:(UIFont *)itemTitleFont {
     self.textFont = itemTitleFont;
     self.titleLabel.font = itemTitleFont;
 }
-- (void)setItemTitleColor:(UIColor *)itemTitleColor {
+- (void)lw_setItemTitleColor:(UIColor *)itemTitleColor {
     self.textColor = itemTitleColor;
     self.titleLabel.textColor = itemTitleColor;
     self.lineColor = itemTitleColor;
 }
-- (void)setItemImage:(UIImage *)itemImage {
+- (void)lw_setItemImage:(UIImage *)itemImage {
     self.imageView.image = itemImage;
 }
-- (void)setItemImageSize:(CGSize)itemImageSize {
+- (void)lw_setItemImageSize:(CGSize)itemImageSize {
     self.imageSize = itemImageSize;
 }
-- (void)showItemLine:(BOOL)show {
-    self.showLine = show;
-}
-- (void)setItemConentInsets:(UIEdgeInsets)itemContentInsets {
+- (void)lw_setItemConentInsets:(UIEdgeInsets)itemContentInsets {
     self.contentInsets = itemContentInsets;
 }
-- (void)setItemLineColor:(UIColor *)itemLineColor {
+- (void)lw_setItemLineColor:(UIColor *)itemLineColor {
     self.lineColor = itemLineColor;
 }
-- (void)setLineColor:(UIColor *)lineColor {
+- (void)lw_setLineColor:(UIColor *)lineColor {
     _lineColor = lineColor;
     self.lineView.backgroundColor = lineColor;
 }
-- (CGSize)itemSize {
+- (CGSize)lw_itemSize {
     CGSize size = CGSizeZero;
     switch (self.itemType) {
         case LWNavigationBarItemOnlyText:
@@ -196,18 +193,49 @@
     self.imageView.center = CGPointMake(self.frame.size.width + self.contentInsets.right - self.imageSize.width * 0.5, self.frame.size.height * 0.5);
     self.imageView.bounds = CGRectMake(0, 0, self.imageSize.width, self.imageSize.height);
 }
+@end
+
+@implementation LWNavigationBarItem (LWDeprecated)
+- (void)setItemTitle:(NSString *)itemTitle {
+    [self lw_setItemTitle:itemTitle];
+}
+- (void)setItemImage:(UIImage *)itemImage {
+    [self lw_setItemImage:itemImage];
+}
+- (void)setItemTitleColor:(UIColor *)itemTitleColor {
+    [self lw_setItemTitleColor:itemTitleColor];
+}
+- (void)setItemTitleFont:(UIFont *)itemTitleFont {
+    [self lw_setItemTitleFont:itemTitleFont];
+}
+- (void)setItemImageSize:(CGSize)itemImageSize {
+    [self lw_setItemImageSize:itemImageSize];
+}
+- (void)setItemConentInsets:(UIEdgeInsets)itemContentInsets {
+    [self lw_setItemConentInsets:itemContentInsets];
+}
+- (void)setItemLineColor:(UIColor *)itemLineColor {
+    [self lw_setItemLineColor:itemLineColor];
+}
+- (CGSize)itemSize {
+    return [self lw_itemSize];
+}
 
 @end
+
 #define LW_StatusBarH [UIApplication sharedApplication].statusBarFrame.size.height
 @interface LWNavigationBar ()
 //状态栏部分
 @property (nonatomic,strong) UIView *statusView;
 //左边items数组
 @property (nonatomic,strong) NSMutableArray<LWNavigationBarItem*> *leftItems;
+@property (nonatomic,strong) NSMutableArray<UIView *> *leftViews;
 //右边items数组
 @property (nonatomic,strong) NSMutableArray<LWNavigationBarItem*> *rightItems;
+@property (nonatomic,strong) NSMutableArray<UIView *> *rightViews;
 //中间标题
 @property (nonatomic,strong) LWNavigationBarItem *titleItem;
+@property (nonatomic,strong) UIView *titleView;
 //左右间距
 @property (nonatomic,assign) CGFloat contentInset;
 //底部细线
@@ -220,6 +248,8 @@
     if (self) {
         self.leftItems = @[].mutableCopy;
         self.rightItems = @[].mutableCopy;
+        self.leftViews = @[].mutableCopy;
+        self.rightViews = @[].mutableCopy;
         self.statusView = [[UIView alloc] init];
         [self addSubview:self.statusView];
         self.lineView = [[UIView alloc] init];
@@ -227,22 +257,34 @@
     }
     return self;
 }
-- (void)addItemToLeft:(LWNavigationBarItem *)item {
+- (void)lw_addItemToLeft:(LWNavigationBarItem *)item {
     [self.leftItems addObject:item];
     [self addSubview:item];
 }
-- (void)addItemToRight:(LWNavigationBarItem *)item {
+- (void)lw_addCustomViewToLeft:(UIView *)customView {
+    [self.leftViews addObject:customView];
+    [self addSubview:customView];
+}
+- (void)lw_addItemToRight:(LWNavigationBarItem *)item {
     [self.rightItems addObject:item];
     [self addSubview:item];
 }
-- (void)addItemToTitle:(LWNavigationBarItem *)item {
+- (void)lw_addCustomViewToRight:(UIView *)customView {
+    [self.rightViews addObject:customView];
+    [self addSubview:customView];
+}
+- (void)lw_addItemToTitle:(LWNavigationBarItem *)item {
     self.titleItem = item;
     [self addSubview:item];
 }
-- (void)setBarContentInset:(CGFloat)barContentInset {
+- (void)lw_addCustomViewToTitle:(UIView *)customView {
+    self.titleView = customView;
+    [self addSubview:self.titleView];
+}
+- (void)lw_setBarContentInset:(CGFloat)barContentInset {
     self.contentInset = barContentInset;
 }
-- (void)setItemLineViewColor:(UIColor *)color {
+- (void)lw_setItemLineViewColor:(UIColor *)color {
     self.lineView.backgroundColor = color;
 }
 - (void)lw_updateNavBarWithAlpha:(CGFloat)alpha {
@@ -250,46 +292,136 @@
     self.statusView.layer.backgroundColor = self.layer.backgroundColor;
 }
 - (void)lw_updateLeftItem:(LWNavigationBarItem *)item atIndex:(int)index {
-    if (index >= self.leftItems.count) {
-        return;
+    if (index < self.leftViews.count) {
+        [self.leftViews removeObjectAtIndex:index];
     }
-    LWNavigationBarItem *leftItem = self.leftItems[index];
-    [self.leftItems removeObject:leftItem];
-    [leftItem removeFromSuperview];
-    leftItem = item;
-    [self.leftItems insertObject:leftItem atIndex:index];
-    [self addSubview:leftItem];
-    [self reloadItems];
+    if (self.leftItems.count == 0) {
+        [self.leftItems addObject:item];
+    }else {
+        if (index >= self.leftItems.count) {
+            return;
+        }
+        LWNavigationBarItem *leftItem = self.leftItems[index];
+        [self.leftItems removeObject:leftItem];
+        [leftItem removeFromSuperview];
+        leftItem = item;
+        [self.leftItems insertObject:leftItem atIndex:index];
+    }
+    [self addSubview:item];
+    [self lw_reloadItems];
+}
+- (void)lw_updateLeftView:(UIView *)customView atIndex:(int)index {
+    if (index < self.leftItems.count) {
+        [self.leftItems removeObjectAtIndex:index];
+    }
+    if (self.leftViews.count == 0) {
+        [self.leftViews addObject:customView];
+    }else {
+        if (index >= self.leftViews.count) {
+            return;
+        }
+        UIView *leftView = self.leftViews[index];
+        [self.leftViews removeObject:leftView];
+        [leftView removeFromSuperview];
+        leftView = customView;
+        [self.leftViews insertObject:leftView atIndex:index];
+    }
+    [self addSubview:customView];
+    [self lw_reloadItems];
 }
 - (void)lw_updateTitleItem:(LWNavigationBarItem *)item {
     if (self.titleItem) {
         [self.titleItem removeFromSuperview];
     }
+    if (self.titleView) {
+        [self.titleView removeFromSuperview];
+        self.titleView = nil;
+    }
     self.titleItem = item;
     [self addSubview:item];
-    [self reloadItems];
+    [self lw_reloadItems];
+}
+- (void)lw_updateTitleView:(UIView *)customView {
+    if (self.titleView) {
+        [self.titleView removeFromSuperview];
+    }
+    if (self.titleItem) {
+        [self.titleItem removeFromSuperview];
+        self.titleItem = nil;
+    }
+    self.titleView = customView;
+    [self addSubview:customView];
+    [self lw_reloadItems];
 }
 - (void)lw_updateRightItem:(LWNavigationBarItem *)item atIndex:(int)index {
-    if (index >= self.rightItems.count) {
-        return;
+    if (index < self.rightViews.count) {
+        [self.rightViews removeObjectAtIndex:index];
     }
-    LWNavigationBarItem *rightItem = self.rightItems[index];
-    [self.rightItems removeObject:rightItem];
-    [rightItem removeFromSuperview];
-    rightItem = item;
-    [self.rightItems insertObject:rightItem atIndex:index];
-    [self addSubview:rightItem];
-    [self reloadItems];
+    if (self.rightItems.count == 0) {
+        [self.rightItems addObject:item];
+    }else {
+        if (index >= self.rightItems.count) {
+            return;
+        }
+        LWNavigationBarItem *rightItem = self.rightItems[index];
+        [self.rightItems removeObject:rightItem];
+        [rightItem removeFromSuperview];
+        rightItem = item;
+        [self.rightItems insertObject:rightItem atIndex:index];
+    }
+    [self addSubview:item];
+    [self lw_reloadItems];
+}
+- (void)lw_updateRightView:(UIView *)customView atIndex:(int)index {
+    if (index < self.rightItems.count) {
+        [self.rightItems removeObjectAtIndex:index];
+    }
+    if (self.rightViews.count == 0) {
+        [self.rightViews addObject:customView];
+    }else {
+        if (index >= self.rightViews.count) {
+            return;
+        }
+        UIView *rightView = self.rightViews[index];
+        [self.rightViews removeObject:rightView];
+        [rightView removeFromSuperview];
+        rightView = customView;
+        [self.rightViews insertObject:rightView atIndex:index];
+    }
+    [self addSubview:customView];
+    [self lw_reloadItems];
 }
 - (void)lw_updateLeftItemAlpha:(CGFloat)alpha atIndex:(int)index{
-    LWNavigationBarItem *item = self.leftItems[index];
-    item.alpha = alpha;
+    if (self.leftItems.count > index) {
+        LWNavigationBarItem *item = self.leftItems[index];
+        item.alpha = alpha;
+    }
+    if (self.leftViews.count > index) {
+        UIView *leftView = self.leftViews[index];
+        leftView.alpha = alpha;
+    }
 }
+- (void)lw_updateRightItemAlpha:(CGFloat)alpha atIndex:(int)index {
+    if (self.rightItems.count > index) {
+        LWNavigationBarItem *item = self.rightItems[index];
+        item.alpha = alpha;
+    }
+    if (self.rightViews.count > index) {
+        UIView *rightView = self.rightViews[index];
+        rightView.alpha = alpha;
+    }
+}
+
 - (void)lw_updateLineAlpha:(CGFloat)alpha {
     self.lineView.alpha = alpha;
 }
 - (void)lw_updateTitleItemAlpha:(CGFloat)alpha {
-    self.titleItem.alpha = alpha;
+    if (self.titleItem) {
+        self.titleItem.alpha = alpha;
+    }
+    if (self.titleView) {
+        self.titleView.alpha = alpha;
+    }
 }
 - (void)lw_addNewItemToLeft:(LWNavigationBarItem *)item {
     if ([self.leftItems containsObject:item]) {
@@ -297,7 +429,15 @@
     }
     [self.leftItems addObject:item];
     [self addSubview:item];
-    [self reloadItems];
+    [self lw_reloadItems];
+}
+- (void)lw_addNewViewToLeft:(UIView *)customView {
+    if ([self.leftViews containsObject:customView]) {
+        return;
+    }
+    [self.leftViews addObject:customView];
+    [self addSubview:customView];
+    [self lw_reloadItems];
 }
 - (void)lw_addNewItemToRight:(LWNavigationBarItem *)item {
     if ([self.rightItems containsObject:item]) {
@@ -305,31 +445,80 @@
     }
     [self.rightItems addObject:item];
     [self addSubview:item];
-    [self reloadItems];
+    [self lw_reloadItems];
+}
+- (void)lw_addNewViewToRight:(UIView *)customView {
+    if ([self.rightViews containsObject:customView]) {
+        return;
+    }
+    [self.rightViews addObject:customView];
+    [self addSubview:customView];
+    [self lw_reloadItems];
 }
 
-- (void)reloadItems {
+- (void)lw_reloadItems {
     self.statusView.frame = CGRectMake(0, 0, self.frame.size.width, LW_StatusBarH);
     CGFloat y = CGRectGetMaxY(self.statusView.frame);
     CGFloat x = self.contentInset;
+    
     for (int i = 0; i < self.leftItems.count; ++i) {
         LWNavigationBarItem *item = self.leftItems[i];
-        item.center = CGPointMake(x + [item itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
-        item.bounds = CGRectMake(0, 0, [item itemSize].width, [item itemSize].height);
+        item.center = CGPointMake(x + [item lw_itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        item.bounds = CGRectMake(0, 0, [item lw_itemSize].width, [item lw_itemSize].height);
         x = CGRectGetMaxX(item.frame);
     }
-    CGFloat titleW = ([self.titleItem itemSize].width > (self.frame.size.width - 2 * x - self.contentInset) ? (self.frame.size.width - 2 * x - self.contentInset) : [self.titleItem itemSize].width);
-    self.titleItem.center = CGPointMake(self.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
-    self.titleItem.bounds = CGRectMake(0, 0, titleW, [self.titleItem itemSize].height);
+    
+    for (int i = 0; i < self.leftViews.count; ++i) {
+        UIView *leftView = self.leftViews[i];
+        leftView.center = CGPointMake(x + leftView.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        leftView.bounds = CGRectMake(0, 0, leftView.frame.size.width, leftView.frame.size.height);
+        x = CGRectGetMaxX(leftView.frame);
+    }
+    if (self.titleItem) {
+        CGFloat titleW = ([self.titleItem lw_itemSize].width > (self.frame.size.width - 2 * x - self.contentInset) ? (self.frame.size.width - 2 * x - self.contentInset) : [self.titleItem lw_itemSize].width);
+        self.titleItem.center = CGPointMake(self.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        self.titleItem.bounds = CGRectMake(0, 0, titleW, [self.titleItem lw_itemSize].height);
+    }
+    if (self.titleView) {
+        self.titleView.center = CGPointMake(self.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        self.titleView.bounds = CGRectMake(0, 0, self.titleView.frame.size.width, self.titleView.frame.size.height);
+    }
     
     x = self.frame.size.width - self.contentInset;
     for (int i = (int)self.rightItems.count - 1; i >= 0; --i) {
          LWNavigationBarItem *item = self.rightItems[i];
-        item.center = CGPointMake(x - [item itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
-        item.bounds = CGRectMake(0, 0, [item itemSize].width, [item itemSize].height);
+        item.center = CGPointMake(x - [item lw_itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        item.bounds = CGRectMake(0, 0, [item lw_itemSize].width, [item lw_itemSize].height);
         x = CGRectGetMinX(item.frame);
+    }
+    for (int i = 0; i < self.rightViews.count; ++i) {
+        UIView *rightView = self.rightViews[i];
+        rightView.center = CGPointMake(x - rightView.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        rightView.bounds = CGRectMake(0, 0, rightView.frame.size.width, rightView.frame.size.height);
+        x = CGRectGetMinX(rightView.frame);
     }
     self.lineView.frame = CGRectMake(0, self.frame.size.height - 0.5, self.frame.size.width, 0.5);
 }
 
+@end
+
+@implementation LWNavigationBar (LWDeprecated)
+- (void)setBarContentInset:(CGFloat)barContentInset {
+    [self lw_setBarContentInset:barContentInset];
+}
+- (void)addItemToLeft:(LWNavigationBarItem *)item {
+    [self lw_addItemToLeft:item];
+}
+- (void)addItemToRight:(LWNavigationBarItem *)item {
+    [self lw_addItemToRight:item];
+}
+- (void)addItemToTitle:(LWNavigationBarItem *)item {
+    [self lw_addItemToTitle:item];
+}
+- (void)setItemLineViewColor:(UIColor *)color {
+    [self lw_setItemLineViewColor:color];
+}
+- (void)reloadItems {
+    [self lw_reloadItems];
+}
 @end
