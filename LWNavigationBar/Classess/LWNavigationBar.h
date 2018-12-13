@@ -56,6 +56,10 @@ typedef NS_ENUM(NSUInteger, LWNavigationBarItemType) {
  *设置内容的边距，这里默认左右边距相同
  */
 - (void)lw_setBarContentInset:(CGFloat)barContentInset;
+/*
+ *设置每两个item之间的间距，默认为0
+ */
+- (void)lw_setItemPadding:(CGFloat)itemPadding;
 /*添加item到左边
  *item: LWNavigationBarItem生成
  */

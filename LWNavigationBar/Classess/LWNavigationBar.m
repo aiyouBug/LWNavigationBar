@@ -240,6 +240,8 @@
 @property (nonatomic,assign) CGFloat contentInset;
 //底部细线
 @property (nonatomic,strong) UIView *lineView;
+//item之间的间距
+@property (nonatomic,assign) CGFloat itemPadding;
 @end
 
 @implementation LWNavigationBar
@@ -283,6 +285,9 @@
 }
 - (void)lw_setBarContentInset:(CGFloat)barContentInset {
     self.contentInset = barContentInset;
+}
+- (void)lw_setItemPadding:(CGFloat)itemPadding {
+    self.itemPadding = itemPadding;
 }
 - (void)lw_setItemLineViewColor:(UIColor *)color {
     self.lineView.backgroundColor = color;
@@ -465,14 +470,14 @@
         LWNavigationBarItem *item = self.leftItems[i];
         item.center = CGPointMake(x + [item lw_itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
         item.bounds = CGRectMake(0, 0, [item lw_itemSize].width, [item lw_itemSize].height);
-        x = CGRectGetMaxX(item.frame);
+        x = CGRectGetMaxX(item.frame) + self.itemPadding;
     }
     
     for (int i = 0; i < self.leftViews.count; ++i) {
         UIView *leftView = self.leftViews[i];
         leftView.center = CGPointMake(x + leftView.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
         leftView.bounds = CGRectMake(0, 0, leftView.frame.size.width, leftView.frame.size.height);
-        x = CGRectGetMaxX(leftView.frame);
+        x = CGRectGetMaxX(leftView.frame) + self.itemPadding;
     }
     if (self.titleItem) {
         CGFloat titleW = ([self.titleItem lw_itemSize].width > (self.frame.size.width - 2 * x - self.contentInset) ? (self.frame.size.width - 2 * x - self.contentInset) : [self.titleItem lw_itemSize].width);
@@ -480,8 +485,9 @@
         self.titleItem.bounds = CGRectMake(0, 0, titleW, [self.titleItem lw_itemSize].height);
     }
     if (self.titleView) {
+        CGFloat titleW = MIN(self.titleView.frame.size.width, (self.frame.size.width - 2 * x - self.contentInset));
         self.titleView.center = CGPointMake(self.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
-        self.titleView.bounds = CGRectMake(0, 0, self.titleView.frame.size.width, self.titleView.frame.size.height);
+        self.titleView.bounds = CGRectMake(0, 0, titleW, self.titleView.frame.size.height);
     }
     
     x = self.frame.size.width - self.contentInset;
@@ -489,13 +495,13 @@
          LWNavigationBarItem *item = self.rightItems[i];
         item.center = CGPointMake(x - [item lw_itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
         item.bounds = CGRectMake(0, 0, [item lw_itemSize].width, [item lw_itemSize].height);
-        x = CGRectGetMinX(item.frame);
+        x = CGRectGetMinX(item.frame) - self.itemPadding;
     }
     for (int i = 0; i < self.rightViews.count; ++i) {
         UIView *rightView = self.rightViews[i];
         rightView.center = CGPointMake(x - rightView.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
         rightView.bounds = CGRectMake(0, 0, rightView.frame.size.width, rightView.frame.size.height);
-        x = CGRectGetMinX(rightView.frame);
+        x = CGRectGetMinX(rightView.frame) - self.itemPadding;
     }
     self.lineView.frame = CGRectMake(0, self.frame.size.height - 0.5, self.frame.size.width, 0.5);
 }
