@@ -30,8 +30,6 @@
 @property (nonatomic,assign) CGFloat lineTopPadding;
 //下划线高度，默认为1
 @property (nonatomic,assign) CGFloat lineHeight;
-//是否显示细线
-@property (nonatomic,assign) BOOL showLine;
 @property (nonatomic,assign) LWNavigationBarItemType itemType;
 //设置内容的内边距
 @property (nonatomic,assign) UIEdgeInsets contentInsets;
@@ -82,7 +80,7 @@
 - (void)lw_setItemTitleColor:(UIColor *)itemTitleColor {
     self.textColor = itemTitleColor;
     self.titleLabel.textColor = itemTitleColor;
-    self.lineColor = itemTitleColor;
+     [self lw_setLineColor:itemTitleColor];
 }
 - (void)lw_setItemImage:(UIImage *)itemImage {
     self.imageView.image = itemImage;
@@ -94,10 +92,10 @@
     self.contentInsets = itemContentInsets;
 }
 - (void)lw_setItemLineColor:(UIColor *)itemLineColor {
-    self.lineColor = itemLineColor;
+    [self lw_setLineColor:itemLineColor];
 }
 - (void)lw_setLineColor:(UIColor *)lineColor {
-    _lineColor = lineColor;
+    self.lineColor = lineColor;
     self.lineView.backgroundColor = lineColor;
 }
 - (CGSize)lw_itemSize {
@@ -245,6 +243,20 @@
 @end
 
 @implementation LWNavigationBar
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.leftItems = @[].mutableCopy;
+        self.rightItems = @[].mutableCopy;
+        self.leftViews = @[].mutableCopy;
+        self.rightViews = @[].mutableCopy;
+        self.statusView = [[UIView alloc] init];
+        [self addSubview:self.statusView];
+        self.lineView = [[UIView alloc] init];
+        [self addSubview:self.lineView];
+    }
+    return self;
+}
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {

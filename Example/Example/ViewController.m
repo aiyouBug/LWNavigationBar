@@ -1,8 +1,8 @@
 //
 //  ViewController.m
-//  LWAlertViewDemo
+//  Example
 //
-//  Created by weil on 2018/11/21.
+//  Created by weil on 2018/12/13.
 //  Copyright © 2018 allyoga. All rights reserved.
 //
 
@@ -10,72 +10,73 @@
 #import "LWNavigationBar.h"
 
 @interface ViewController ()
-@property (nonatomic,strong) LWNavigationBar *bar;
-@property (nonatomic,strong) LWNavigationBarItem *addItem;
+//左右中间皆为文字
+@property (nonatomic,strong) LWNavigationBar *bar1;
+//左右为图片中间为文字
+@property (nonatomic,strong) LWNavigationBar *bar2;
+//左文字右图片或者左图片右文字中间文字
+@property (nonatomic,strong) LWNavigationBar *bar3;
+//动态控制左右item的隐藏和显示
+@property (nonatomic,strong) LWNavigationBar *bar4;
+//左右和中间可自定义view
+@property (nonatomic,strong) LWNavigationBar *bar5;
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    LWNavigationBarItem *leftItem = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemOnlyImage];
-    [leftItem lw_setItemImage:[UIImage imageNamed:@"nav_back_black"]];
-    [leftItem lw_setItemImageSize:CGSizeMake(20, 20)];
-    [leftItem addTarget:self action:@selector(action1) forControlEvents:UIControlEventTouchUpInside];
-    
-    LWNavigationBarItem *rightItem = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemOnlyImage];
-    [rightItem lw_setItemImageSize:CGSizeMake(20, 20)];
-    [rightItem lw_setItemImage:[UIImage imageNamed:@"detail_share"]];
-    
-    LWNavigationBarItem *titleItem = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemTextLine];
-    [titleItem lw_setItemTitle:@"这是一个很长的标题"];
-    [titleItem lw_setItemTitleFont:[UIFont systemFontOfSize:15]];
-    [titleItem lw_setItemTitleColor:[UIColor redColor]];
-    
-    LWNavigationBar *bar = [[LWNavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 88)];
-    [bar lw_addItemToLeft:leftItem];
-    [bar lw_addItemToRight:rightItem];
-    [bar lw_setBarContentInset:15];
-    [bar lw_addItemToTitle:titleItem];
-    [bar lw_reloadItems];
-    [bar lw_setItemLineViewColor:[UIColor redColor]];
-    [bar lw_updateLineAlpha:1.0];
-    [self.view addSubview:bar];
-    self.bar = bar;
-    bar.backgroundColor = [UIColor whiteColor];
-    
-    LWNavigationBarItem *leftItem2 = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemMulti];
-    [leftItem2 lw_setItemImage:[UIImage imageNamed:@"detail_share"]];
-    [leftItem2 lw_setItemImageSize:CGSizeMake(20, 20)];
-    [leftItem2 lw_setItemTitle:@"标题"];
-    [leftItem2 lw_setItemTitleFont:[UIFont systemFontOfSize:15]];
-    [leftItem2 lw_setItemTitleColor:[UIColor blackColor]];
-    self.addItem = leftItem2;
+    [self p_setupBar1];
+    [self p_setupBar2];
+    [self p_setupBar3];
+    [self p_setupBar4];
+    [self p_setupBar5];
 }
-//static BOOL show = NO;
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [super touchesBegan:touches withEvent:event];
-//    show = !show;
-//    LWNavigationBarItem *item = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemOnlyImage];
-//    if (show) {
-//        [item setItemImage:[UIImage imageNamed:@"detail_share"]];
-//        [item addTarget:self action:@selector(action2) forControlEvents:UIControlEventTouchUpInside];
-//    }else {
-//        [item setItemImage:[UIImage imageNamed:@"nav_back_black"]];
-//        [item addTarget:self action:@selector(action1) forControlEvents:UIControlEventTouchUpInside];
-//    }
-//    [item setItemImageSize:CGSizeMake(20, 20)];
-//    [self.bar lw_updateLeftItem:item atIndex:0];
-    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-    titleView.backgroundColor = [UIColor redColor];
-    [self.bar lw_updateLeftView:titleView atIndex:0];
+- (void)p_setupBar1 {
+    //带下划线
+    LWNavigationBarItem *leftItem = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemTextLine];
+    [leftItem lw_setItemTitle:@"左边"];
+    [leftItem lw_setItemTitleFont:[UIFont systemFontOfSize:15]];
+    [leftItem lw_setItemTitleColor:[UIColor redColor]];
+    [leftItem lw_setItemLineColor:[UIColor whiteColor]];
+    
+    
+    LWNavigationBarItem *item2 = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemOnlyText];
+    [item2 lw_setItemTitle:@"右边"];
+    [item2 lw_setItemTitleFont:[UIFont systemFontOfSize:15]];
+    [item2 lw_setItemTitleColor:[UIColor whiteColor]];
+    
+    LWNavigationBarItem *item3 = [[LWNavigationBarItem alloc] initWithItemType:LWNavigationBarItemOnlyText];
+    [item3 lw_setItemTitle:@"很长很长很长的标题"];
+    [item3 lw_setItemTitleFont:[UIFont systemFontOfSize:15]];
+    [item3 lw_setItemTitleColor:[UIColor darkGrayColor]];
+    
+    self.bar1 = [[LWNavigationBar alloc] init];
+    self.bar1.backgroundColor = [UIColor lightGrayColor];
+    [self.bar1 lw_setItemLineViewColor:[UIColor redColor]];
+    [self.bar1 lw_setBarContentInset:15];
+    [self.bar1 lw_addItemToLeft:leftItem];
+    [self.bar1 lw_addItemToRight:item2];
+    [self.bar1 lw_addItemToTitle:item3];
+    self.bar1.frame = CGRectMake(0, 0, self.view.frame.size.width, 88);
+    [self.bar1 lw_reloadItems];
+    [self.view addSubview:self.bar1];
+}
+- (void)p_setupBar2 {
+    
+}
+- (void)p_setupBar3 {
+    
+}
+- (void)p_setupBar4 {
+    
+}
+- (void)p_setupBar5 {
+    
 }
 
-- (void)action1 {
-    NSLog(@"left1");
-}
-- (void)action2 {
-    NSLog(@"left2");
+- (void)p_clickBar4 {
+    
 }
 
 @end
