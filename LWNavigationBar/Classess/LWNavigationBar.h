@@ -155,6 +155,8 @@ typedef NS_ENUM(NSUInteger, LWNavigationBarItemType) {
  *customView：自定义view
  */
 - (void)lw_addNewViewToRight:(UIView *)customView;
+/** 是否显示顶部状态栏 **/
+- (void)lw_showTopStatusView:(BOOL)show;
 @end
 
 @interface LWNavigationBar (LWDeprecated)

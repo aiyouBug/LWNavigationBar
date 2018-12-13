@@ -472,49 +472,66 @@
     [self addSubview:customView];
     [self lw_reloadItems];
 }
+- (void)lw_showTopStatusView:(BOOL)show {
+    self.statusView.hidden = !show;
+}
 
 - (void)lw_reloadItems {
-    self.statusView.frame = CGRectMake(0, 0, self.frame.size.width, LW_StatusBarH);
+    if (self.statusView.hidden) {
+        self.statusView.frame = CGRectZero;
+    }else {
+        self.statusView.frame = CGRectMake(0, 0, self.frame.size.width, LW_StatusBarH);
+    }
     CGFloat y = CGRectGetMaxY(self.statusView.frame);
-    CGFloat x = self.contentInset;
+    CGFloat leftX = self.contentInset;
     
     for (int i = 0; i < self.leftItems.count; ++i) {
         LWNavigationBarItem *item = self.leftItems[i];
-        item.center = CGPointMake(x + [item lw_itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        item.center = CGPointMake(leftX + [item lw_itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
         item.bounds = CGRectMake(0, 0, [item lw_itemSize].width, [item lw_itemSize].height);
-        x = CGRectGetMaxX(item.frame) + self.itemPadding;
+        leftX = CGRectGetMaxX(item.frame) + self.itemPadding;
     }
     
     for (int i = 0; i < self.leftViews.count; ++i) {
         UIView *leftView = self.leftViews[i];
-        leftView.center = CGPointMake(x + leftView.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        leftView.center = CGPointMake(leftX + leftView.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
         leftView.bounds = CGRectMake(0, 0, leftView.frame.size.width, leftView.frame.size.height);
-        x = CGRectGetMaxX(leftView.frame) + self.itemPadding;
+        leftX = CGRectGetMaxX(leftView.frame) + self.itemPadding;
     }
+    
+  CGFloat rightX = self.frame.size.width - self.contentInset;
+    for (int i = (int)self.rightItems.count - 1; i >= 0; --i) {
+         LWNavigationBarItem *item = self.rightItems[i];
+        item.center = CGPointMake(rightX - [item lw_itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        item.bounds = CGRectMake(0, 0, [item lw_itemSize].width, [item lw_itemSize].height);
+        rightX = CGRectGetMinX(item.frame) - self.itemPadding;
+    }
+    for (int i = 0; i < self.rightViews.count; ++i) {
+        UIView *rightView = self.rightViews[i];
+        rightView.center = CGPointMake(rightX - rightView.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
+        rightView.bounds = CGRectMake(0, 0, rightView.frame.size.width, rightView.frame.size.height);
+        rightX = CGRectGetMinX(rightView.frame) - self.itemPadding;
+    }
+    
     if (self.titleItem) {
-        CGFloat titleW = ([self.titleItem lw_itemSize].width > (self.frame.size.width - 2 * x - self.contentInset) ? (self.frame.size.width - 2 * x - self.contentInset) : [self.titleItem lw_itemSize].width);
+        CGFloat padding = MAX(self.frame.size.width - rightX, leftX) + self.contentInset;
+        CGFloat titleW = MIN([self.titleItem lw_itemSize].width, self.frame.size.width - 2 * padding);
+        if (titleW < 0) {
+            titleW = 0;
+        }
         self.titleItem.center = CGPointMake(self.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
         self.titleItem.bounds = CGRectMake(0, 0, titleW, [self.titleItem lw_itemSize].height);
     }
     if (self.titleView) {
-        CGFloat titleW = MIN(self.titleView.frame.size.width, (self.frame.size.width - 2 * x - self.contentInset));
+        CGFloat padding = MAX(self.frame.size.width - rightX, leftX) + self.contentInset;
+        CGFloat titleW = MIN(self.titleView.frame.size.width, self.frame.size.width - 2 * padding);
+        if (titleW < 0) {
+            titleW = 0;
+        }
         self.titleView.center = CGPointMake(self.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
         self.titleView.bounds = CGRectMake(0, 0, titleW, self.titleView.frame.size.height);
     }
-    
-    x = self.frame.size.width - self.contentInset;
-    for (int i = (int)self.rightItems.count - 1; i >= 0; --i) {
-         LWNavigationBarItem *item = self.rightItems[i];
-        item.center = CGPointMake(x - [item lw_itemSize].width * 0.5, y + (self.frame.size.height - y) * 0.5);
-        item.bounds = CGRectMake(0, 0, [item lw_itemSize].width, [item lw_itemSize].height);
-        x = CGRectGetMinX(item.frame) - self.itemPadding;
-    }
-    for (int i = 0; i < self.rightViews.count; ++i) {
-        UIView *rightView = self.rightViews[i];
-        rightView.center = CGPointMake(x - rightView.frame.size.width * 0.5, y + (self.frame.size.height - y) * 0.5);
-        rightView.bounds = CGRectMake(0, 0, rightView.frame.size.width, rightView.frame.size.height);
-        x = CGRectGetMinX(rightView.frame) - self.itemPadding;
-    }
+
     self.lineView.frame = CGRectMake(0, self.frame.size.height - 0.5, self.frame.size.width, 0.5);
 }
 
