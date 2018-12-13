@@ -271,27 +271,35 @@
     }
     return self;
 }
-- (void)lw_addItemToLeft:(LWNavigationBarItem *)item {
-    [self.leftItems addObject:item];
-    [self addSubview:item];
+- (void)lw_addItemToLeft:(LWNavigationBarItem *__nonnull)item {
+    if (item) {
+        [self.leftItems addObject:item];
+        [self addSubview:item];
+    }
 }
-- (void)lw_addCustomViewToLeft:(UIView *)customView {
-    [self.leftViews addObject:customView];
-    [self addSubview:customView];
+- (void)lw_addCustomViewToLeft:(UIView *__nonnull)customView {
+    if (customView) {
+        [self.leftViews addObject:customView];
+        [self addSubview:customView];
+    }
 }
-- (void)lw_addItemToRight:(LWNavigationBarItem *)item {
-    [self.rightItems addObject:item];
-    [self addSubview:item];
+- (void)lw_addItemToRight:(LWNavigationBarItem *__nonnull)item {
+    if (item) {
+        [self.rightItems addObject:item];
+        [self addSubview:item];
+    }
 }
-- (void)lw_addCustomViewToRight:(UIView *)customView {
-    [self.rightViews addObject:customView];
-    [self addSubview:customView];
+- (void)lw_addCustomViewToRight:(UIView *__nonnull)customView {
+    if (customView) {
+        [self.rightViews addObject:customView];
+        [self addSubview:customView];
+    }
 }
-- (void)lw_addItemToTitle:(LWNavigationBarItem *)item {
+- (void)lw_addItemToTitle:(LWNavigationBarItem *__nonnull)item {
     self.titleItem = item;
     [self addSubview:item];
 }
-- (void)lw_addCustomViewToTitle:(UIView *)customView {
+- (void)lw_addCustomViewToTitle:(UIView *__nonnull)customView {
     self.titleView = customView;
     [self addSubview:self.titleView];
 }
@@ -308,12 +316,15 @@
     self.layer.backgroundColor = [self.backgroundColor colorWithAlphaComponent:alpha].CGColor;
     self.statusView.layer.backgroundColor = self.layer.backgroundColor;
 }
-- (void)lw_updateLeftItem:(LWNavigationBarItem *)item atIndex:(int)index {
+- (void)lw_updateLeftItem:(LWNavigationBarItem *_Nullable)item atIndex:(int)index {
     if (index < self.leftViews.count) {
         [self.leftViews removeObjectAtIndex:index];
     }
     if (self.leftItems.count == 0) {
-        [self.leftItems addObject:item];
+        if (item) {
+            [self.leftItems addObject:item];
+            [self addSubview:item];
+        }
     }else {
         if (index >= self.leftItems.count) {
             return;
@@ -321,18 +332,23 @@
         LWNavigationBarItem *leftItem = self.leftItems[index];
         [self.leftItems removeObject:leftItem];
         [leftItem removeFromSuperview];
-        leftItem = item;
-        [self.leftItems insertObject:leftItem atIndex:index];
+        if (item) {
+            leftItem = item;
+            [self.leftItems insertObject:leftItem atIndex:index];
+            [self addSubview:item];
+        }
     }
-    [self addSubview:item];
     [self lw_reloadItems];
 }
-- (void)lw_updateLeftView:(UIView *)customView atIndex:(int)index {
+- (void)lw_updateLeftView:(UIView *_Nullable)customView atIndex:(int)index {
     if (index < self.leftItems.count) {
         [self.leftItems removeObjectAtIndex:index];
     }
     if (self.leftViews.count == 0) {
-        [self.leftViews addObject:customView];
+        if (customView) {
+            [self.leftViews addObject:customView];
+             [self addSubview:customView];
+        }
     }else {
         if (index >= self.leftViews.count) {
             return;
@@ -340,13 +356,15 @@
         UIView *leftView = self.leftViews[index];
         [self.leftViews removeObject:leftView];
         [leftView removeFromSuperview];
-        leftView = customView;
-        [self.leftViews insertObject:leftView atIndex:index];
+        if (customView) {
+            leftView = customView;
+            [self.leftViews insertObject:leftView atIndex:index];
+             [self addSubview:customView];
+        }
     }
-    [self addSubview:customView];
     [self lw_reloadItems];
 }
-- (void)lw_updateTitleItem:(LWNavigationBarItem *)item {
+- (void)lw_updateTitleItem:(LWNavigationBarItem *_Nullable)item {
     if (self.titleItem) {
         [self.titleItem removeFromSuperview];
     }
@@ -355,10 +373,12 @@
         self.titleView = nil;
     }
     self.titleItem = item;
-    [self addSubview:item];
+    if (item) {
+        [self addSubview:item];
+    }
     [self lw_reloadItems];
 }
-- (void)lw_updateTitleView:(UIView *)customView {
+- (void)lw_updateTitleView:(UIView *_Nullable)customView {
     if (self.titleView) {
         [self.titleView removeFromSuperview];
     }
@@ -367,15 +387,20 @@
         self.titleItem = nil;
     }
     self.titleView = customView;
-    [self addSubview:customView];
+    if (customView) {
+        [self addSubview:customView];
+    }
     [self lw_reloadItems];
 }
-- (void)lw_updateRightItem:(LWNavigationBarItem *)item atIndex:(int)index {
+- (void)lw_updateRightItem:(LWNavigationBarItem *_Nullable)item atIndex:(int)index {
     if (index < self.rightViews.count) {
         [self.rightViews removeObjectAtIndex:index];
     }
     if (self.rightItems.count == 0) {
-        [self.rightItems addObject:item];
+        if (item) {
+            [self.rightItems addObject:item];
+            [self addSubview:item];
+        }
     }else {
         if (index >= self.rightItems.count) {
             return;
@@ -383,18 +408,23 @@
         LWNavigationBarItem *rightItem = self.rightItems[index];
         [self.rightItems removeObject:rightItem];
         [rightItem removeFromSuperview];
-        rightItem = item;
-        [self.rightItems insertObject:rightItem atIndex:index];
+        if (item) {
+            rightItem = item;
+            [self.rightItems insertObject:rightItem atIndex:index];
+            [self addSubview:item];
+        }
     }
-    [self addSubview:item];
     [self lw_reloadItems];
 }
-- (void)lw_updateRightView:(UIView *)customView atIndex:(int)index {
+- (void)lw_updateRightView:(UIView *_Nullable)customView atIndex:(int)index {
     if (index < self.rightItems.count) {
         [self.rightItems removeObjectAtIndex:index];
     }
     if (self.rightViews.count == 0) {
-        [self.rightViews addObject:customView];
+        if (customView) {
+            [self.rightViews addObject:customView];
+             [self addSubview:customView];
+        }
     }else {
         if (index >= self.rightViews.count) {
             return;
@@ -402,10 +432,12 @@
         UIView *rightView = self.rightViews[index];
         [self.rightViews removeObject:rightView];
         [rightView removeFromSuperview];
-        rightView = customView;
-        [self.rightViews insertObject:rightView atIndex:index];
+        if (customView) {
+            rightView = customView;
+            [self.rightViews insertObject:rightView atIndex:index];
+            [self addSubview:customView];
+        }
     }
-    [self addSubview:customView];
     [self lw_reloadItems];
 }
 - (void)lw_updateLeftItemAlpha:(CGFloat)alpha atIndex:(int)index{
@@ -440,7 +472,10 @@
         self.titleView.alpha = alpha;
     }
 }
-- (void)lw_addNewItemToLeft:(LWNavigationBarItem *)item {
+- (void)lw_addNewItemToLeft:(LWNavigationBarItem *__nonnull)item {
+    if (!item) {
+        return;
+    }
     if ([self.leftItems containsObject:item]) {
         return;
     }
@@ -448,7 +483,10 @@
     [self addSubview:item];
     [self lw_reloadItems];
 }
-- (void)lw_addNewViewToLeft:(UIView *)customView {
+- (void)lw_addNewViewToLeft:(UIView *__nonnull)customView {
+    if (!customView) {
+        return;
+    }
     if ([self.leftViews containsObject:customView]) {
         return;
     }
@@ -456,7 +494,10 @@
     [self addSubview:customView];
     [self lw_reloadItems];
 }
-- (void)lw_addNewItemToRight:(LWNavigationBarItem *)item {
+- (void)lw_addNewItemToRight:(LWNavigationBarItem *__nonnull)item {
+    if (!item) {
+        return;
+    }
     if ([self.rightItems containsObject:item]) {
         return;
     }
@@ -464,7 +505,10 @@
     [self addSubview:item];
     [self lw_reloadItems];
 }
-- (void)lw_addNewViewToRight:(UIView *)customView {
+- (void)lw_addNewViewToRight:(UIView *__nonnull)customView {
+    if (!customView) {
+        return;
+    }
     if ([self.rightViews containsObject:customView]) {
         return;
     }

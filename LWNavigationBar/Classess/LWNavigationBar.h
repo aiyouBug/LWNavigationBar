@@ -61,29 +61,29 @@ typedef NS_ENUM(NSUInteger, LWNavigationBarItemType) {
  */
 - (void)lw_setItemPadding:(CGFloat)itemPadding;
 /*添加item到左边
- *item: LWNavigationBarItem生成
+ *item: LWNavigationBarItem生成,必须有值
  */
-- (void)lw_addItemToLeft:(LWNavigationBarItem *)item;
+- (void)lw_addItemToLeft:(LWNavigationBarItem * __nonnull)item;
 /*添加自定义view为左边item
- *customView:自定义view
+ *customView:自定义view,必须有值
  */
-- (void)lw_addCustomViewToLeft:(UIView *)customView;
+- (void)lw_addCustomViewToLeft:(UIView *__nonnull)customView;
 /*添加item到右边
- *item: LWNavigationBarItem生成
+ *item: LWNavigationBarItem生成,必须有值
  */
-- (void)lw_addItemToRight:(LWNavigationBarItem *)item;
+- (void)lw_addItemToRight:(LWNavigationBarItem *__nonnull)item;
 /*添加自定义view为右边item
- *customView:自定义view
+ *customView:自定义view,必须有值
  */
-- (void)lw_addCustomViewToRight:(UIView *)customView;
+- (void)lw_addCustomViewToRight:(UIView *__nonnull)customView;
 /*添加item作为标题
- *item: LWNavigationBarItem生成
+ *item: LWNavigationBarItem生成,必须有值
  */
-- (void)lw_addItemToTitle:(LWNavigationBarItem *)item;
+- (void)lw_addItemToTitle:(LWNavigationBarItem *__nonnull)item;
 /*添加自定义view为标题item
- *customView:自定义view
+ *customView:自定义view,必须有值
  */
-- (void)lw_addCustomViewToTitle:(UIView *)customView;
+- (void)lw_addCustomViewToTitle:(UIView *__nonnull)customView;
 /*设置导航栏底部细线的颜色
  */
 - (void)lw_setItemLineViewColor:(UIColor *)color;
@@ -94,33 +94,33 @@ typedef NS_ENUM(NSUInteger, LWNavigationBarItemType) {
  */
 - (void)lw_updateNavBarWithAlpha:(CGFloat)alpha;
 /*更新左边的item
- *item:由LWNavigationBarItem生成
+ *item:由LWNavigationBarItem生成，为nil时表示删除操作
  *index:标明更新左边第几个item
  */
-- (void)lw_updateLeftItem:(LWNavigationBarItem *)item atIndex:(int)index;
+- (void)lw_updateLeftItem:( LWNavigationBarItem * _Nullable)item atIndex:(int)index;
 /*更新左边的item
- *customView:自定义的view
+ *customView:自定义的view，为nil时表示删除操作
  *index:标明更新左边第几个item
  */
-- (void)lw_updateLeftView:(UIView *)customView atIndex:(int)index;
+- (void)lw_updateLeftView:(UIView *_Nullable)customView atIndex:(int)index;
 /*更新标题item
- *item:由LWNavigationBarItem生成
+ *item:由LWNavigationBarItem生成，为nil时表示删除操作
  */
-- (void)lw_updateTitleItem:(LWNavigationBarItem *)item;
+- (void)lw_updateTitleItem:(LWNavigationBarItem *_Nullable)item;
 /*更新标题item
- *customView:自定义的view
+ *customView:自定义的view，为nil时表示删除操作
  */
-- (void)lw_updateTitleView:(UIView *)customView;
+- (void)lw_updateTitleView:(UIView *_Nullable)customView;
 /*更新右边的item
- *item:由LWNavigationBarItem生成
+ *item:由LWNavigationBarItem生成，为nil时表示删除操作
  *index:标明更新右边第几个item
  */
-- (void)lw_updateRightItem:(LWNavigationBarItem *)item atIndex:(int)index;
+- (void)lw_updateRightItem:(LWNavigationBarItem *_Nullable)item atIndex:(int)index;
 /*更新右边的item
- *customView:自定义的view
+ *customView:自定义的view，为nil时表示删除操作
  *index:标明更新右边第几个item
  */
-- (void)lw_updateRightView:(UIView *)customView atIndex:(int)index;
+- (void)lw_updateRightView:(UIView *_Nullable)customView atIndex:(int)index;
 /*更新左边item的透明度
  *alpha:透明度
  *index:标明第几个
@@ -140,21 +140,21 @@ typedef NS_ENUM(NSUInteger, LWNavigationBarItemType) {
  */
 - (void)lw_updateRightItemAlpha:(CGFloat)alpha atIndex:(int)index;
 /*向左边添加新的item
- *item：LWNavigationBarItem生成
+ *item：LWNavigationBarItem生成,必须有值
  */
-- (void)lw_addNewItemToLeft:(LWNavigationBarItem *)item;
+- (void)lw_addNewItemToLeft:(LWNavigationBarItem *__nonnull)item;
 /*向左边添加新的item
- *customView：自定义view
+ *customView：自定义view,必须有值
  */
-- (void)lw_addNewViewToLeft:(UIView *)customView;
+- (void)lw_addNewViewToLeft:(UIView *__nonnull)customView;
 /*向右边添加新的item
- *item：LWNavigationBarItem生成
+ *item：LWNavigationBarItem生成,必须有值
  */
-- (void)lw_addNewItemToRight:(LWNavigationBarItem *)item;
+- (void)lw_addNewItemToRight:(LWNavigationBarItem *__nonnull)item;
 /*向右边添加新的item
- *customView：自定义view
+ *customView：自定义view,必须有值
  */
-- (void)lw_addNewViewToRight:(UIView *)customView;
+- (void)lw_addNewViewToRight:(UIView *__nonnull)customView;
 /** 是否显示顶部状态栏 **/
 - (void)lw_showTopStatusView:(BOOL)show;
 @end
